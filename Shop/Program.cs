@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json.Linq;
-using System.Text.Json;
-using AutoMapper;
-using Shop.Models;
+using Shop.Extensions;
 using Shop.Database;
 namespace Shop;
 
@@ -47,10 +45,13 @@ class Program
         GetPathToImages();
         GetApplicationUrl();
         // Services
+        
+        
         builder.Services
             .AddCors()
-            .AddAutoMapper(typeof(Program))
             .AddSwaggerGen()
+            .AddAutoMapper(typeof(Program))
+            .AddUnitOfWork()
             .AddEndpointsApiExplorer()
             .AddDbContext<ApplicationContext>(option =>
             {

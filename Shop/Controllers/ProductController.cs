@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Shop.Models;
-using Shop.Database;
+using Shop.Models.View;
+using Shop.Models.Repository;
 
 namespace Shop.Controllers;
 
@@ -10,101 +10,74 @@ namespace Shop.Controllers;
 [Route("Product")]
 public class ProductController : ControllerBase
 {
-    private readonly ApplicationContext _db = null!;
-    public ProductController(ApplicationContext db)
+    private readonly IUnitOfWork uow;
+    private readonly IMapper mapper;
+    public ProductController(IUnitOfWork uow, IMapper mapper)
     {
-        _db = db;
+        this.uow = uow;
+        this.mapper = mapper;
     }
 
-    [HttpGet]
-    [Route("{id:int}")]
-    public async Task<ActionResult<Product>> Get(int id)
+    [HttpGet("{id:int}")]
+    public ActionResult<ProductView> Get(int id)
     {
-        var product = await _db.Products.FirstOrDefaultAsync(p => p.Id == id);
+        var product = uow.Products.Find(id);
         if (product == null)
         {
             return NotFound(new {message = "Not found"});
         }
         product.Popularity++;
-        await _db.SaveChangesAsync();
-        await SetPathToImageAsync(product);
-        return Ok(product);
+        uow.Save();
+
+        var viewProducts = mapper.Map<ProductView>(product);
+        return Ok(viewProducts);
     }
 
-    [HttpGet]
-    [Route("Count/{count:int}")]
-    public async Task<ActionResult<IEnumerable<Product>>> GetCountAsync(int count, int begin = 1)
+    [HttpGet("Count/{count:int}")]
+    public ActionResult<IEnumerable<ProductView>> GetCount(int count, int begin = 1)
     {
-        var products = _db.Products.Skip((begin-1)*count).Take(count).ToArray();
+        var products = uow.Products.Paging((begin - 1) * count, count).ToArray();
         if (products.Length == 0)
         {
             return NotFound(new { message = "Products are missing" });
         }
 
-        await SetPathToImageAsync(products);
-        return Ok(products);
+        var viewProducts = mapper.Map<ProductView[]>(products);
+        return Ok(viewProducts);
     }
 
-    [HttpGet]
-    [Route("All")]
+    [HttpGet("All")]
     public ActionResult GetAll()
     {
         return RedirectToAction("GetCount", "Product", new {count = -1});
     }
 
-    [HttpGet]
-    [Route("Popularity")]
-    public async Task<ActionResult<IEnumerable<Product>>> GetPopularity(int count, int begin = 1)
+    [HttpGet("Popularity")]
+    public ActionResult<IEnumerable<ProductView>> GetPopularity(int count, int begin = 1)
     {
-        var products = _db.Products.Skip((begin - 1) * count).Take(count).OrderByDescending(p => p.Popularity).Take(count).ToArray();
+        var products = uow.Products.Paging((begin - 1) * count, count, p => p.Popularity, false).ToArray();
         if (products.Length == 0)
         {
             return NotFound(new { message = "Products are missing" });
         }
 
-
-        await SetPathToImageAsync(products);
-        return Ok(products);
+        var viewProducts = mapper.Map<ProductView[]>(products);
+        return Ok(viewProducts);
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddProductAsync(Product product)
+    public ActionResult AddProduct(Product product)
     {
-        _db.Products.Add(product);
-        await _db.SaveChangesAsync();
+        uow.Products.Add(product);
+        uow.Save();
         return Ok(new { message = "Product created" });
     }
 
     [HttpPut]
-    public async Task<ActionResult<Product>> ChangeProduct(int id, Product product)
+    public ActionResult<Product> ChangeProduct(Product product)
     {
-        var productBefore = await _db.Products.FirstOrDefaultAsync(p => p.Id == id);
-        if (productBefore == null)
-        {
-            return NotFound(new { message = "Not found product" });
-        }
-        _db.Entry(productBefore).CurrentValues.SetValues(product);
-        await _db.SaveChangesAsync();
+        uow.Products.Update(product);
+        uow.Save();
         return product;
-    }
-
-    [NonAction]
-    public async Task SetPathToImageAsync(params Product[] products)
-    {
-        bool isChange = false;
-        foreach (var product in products)
-        {
-            if (!isChange)
-            {
-                isChange = product.SetImagesPath();
-                continue;
-            }
-            product.SetImagesPath();
-        }
-        
-        if (isChange)
-        {
-            await _db.SaveChangesAsync();
-        }
     }
 }
