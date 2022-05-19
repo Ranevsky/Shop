@@ -7,7 +7,7 @@ using Shop.Models.Repository;
 namespace Shop.Controllers;
 
 [ApiController]
-[Route("Product")]
+[Route("[controller]")]
 public class ProductController : ControllerBase
 {
     private readonly IUnitOfWork uow;
@@ -63,21 +63,5 @@ public class ProductController : ControllerBase
 
         var viewProducts = mapper.Map<ProductView[]>(products);
         return Ok(viewProducts);
-    }
-
-    [HttpPost]
-    public ActionResult AddProduct(Product product)
-    {
-        uow.Products.Add(product);
-        uow.Save();
-        return Ok(new { message = "Product created" });
-    }
-
-    [HttpPut]
-    public ActionResult<Product> ChangeProduct(Product product)
-    {
-        uow.Products.Update(product);
-        uow.Save();
-        return product;
     }
 }
