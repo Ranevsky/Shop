@@ -63,7 +63,10 @@ public class ProductRepository : Repository<Product>, IProductRepository
     
     private IQueryable<Product> GetAllInclusions()
     {
-        return db.Products.Include(p => p.Images);
+        return db.Products
+            .Include(p => p.Images)
+            .Include(p => p.Type)
+            .Include(p => p.Warranty);
     }
     private void CheckingImageExists(params Product[] products)
     {

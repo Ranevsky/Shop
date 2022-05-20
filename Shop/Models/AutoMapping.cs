@@ -7,12 +7,28 @@ public class AutoMapping : Profile
 {
     public AutoMapping()
     {
-        CreateMap<Product, ProductView>();
+        CreateMap<Product, ProductView>()
+            .ForMember(p => p.ProductType, opt =>
+            {
+                opt.MapFrom(p => p.Type.Name);
+            })
+            .ForMember(p => p.Warranty, opt =>
+            {
+                opt.MapFrom(p => Convert.WarrantyToString(p.Warranty));
+            });
+
+
         CreateMap<Product, ProductCatalogView>()
             .ForMember(p => p.Image, opt =>
             {
                 opt.MapFrom(p => Convert.FirstImageToString(p.Images));
-            });
+            })
+            .ForMember(p => p.ProductType, opt =>
+             {
+                 opt.MapFrom(p => p.Type.Name);
+             });
+
+
 
         CreateMap<Image, ImageView>()
             .ForMember(i => i.Url, opt =>
@@ -34,5 +50,10 @@ public class AutoMapping : Profile
             return $"{Program.applicationUrl}{Program.ImageUrl}/{image.Name}";
 
         }
+        static internal string? WarrantyToString(Warranty? warranty)
+        {
+            return warranty?.Description ?? null;
+        }
+
     }
 }

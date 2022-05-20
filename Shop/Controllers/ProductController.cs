@@ -42,7 +42,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("Page")]
-    public ActionResult<IEnumerable<ProductCatalogView>> GetCount(int count, int page = 1)
+    public ActionResult<IEnumerable<ProductCatalogView>> Page(int count, int page = 1)
     {
         var products = uow.Products.Paging((page - 1) * count, count).ToArray();
         if (products.Length == 0)
@@ -57,11 +57,11 @@ public class ProductController : ControllerBase
     [HttpGet("All")]
     public ActionResult GetAll()
     {
-        return RedirectToAction("GetCount", "Product", new {count = -1});
+        return RedirectToAction("Page", "Product", new {count = -1, page = 1});
     }
 
     [HttpGet("Popularity")]
-    public ActionResult<IEnumerable<ProductCatalogView>> GetPopularity(int count, int page = 1)
+    public ActionResult<IEnumerable<ProductCatalogView>> PopularityPage(int count, int page = 1)
     {
         var products = uow.Products.Paging((page - 1) * count, count, p => p.Popularity, false).ToArray();
         if (products.Length == 0)

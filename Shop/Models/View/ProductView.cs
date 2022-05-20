@@ -9,4 +9,5 @@ public class ProductView
     public string? Description { get; set; }
     public List<string> Characteristic { get; set; } = new();
     public string? Warranty { get; set; }
+    public bool IsStock { get; set; }
 }

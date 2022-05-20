@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shop.Database;
 
@@ -10,9 +11,10 @@ using Shop.Database;
 namespace Shop.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220520215045_add_product_type")]
+    partial class add_product_type
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
@@ -63,7 +65,11 @@ namespace Shop.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("TypeId")
+                    b.Property<string>("ProductType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("TypeId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("WarrantyId")
@@ -84,7 +90,7 @@ namespace Shop.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -119,9 +125,7 @@ namespace Shop.Migrations
                 {
                     b.HasOne("Shop.Models.ProductType", "Type")
                         .WithMany("Products")
-                        .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TypeId");
 
                     b.HasOne("Shop.Models.Warranty", "Warranty")
                         .WithMany("Products")

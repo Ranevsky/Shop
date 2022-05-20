@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shop.Database;
 
@@ -10,9 +11,10 @@ using Shop.Database;
 namespace Shop.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20220520180951_Add warranties field")]
+    partial class Addwarrantiesfield
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
@@ -63,34 +65,16 @@ namespace Shop.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("TypeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("WarrantyId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TypeId");
-
-                    b.HasIndex("WarrantyId");
-
-                    b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("Shop.Models.ProductType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("ProductType")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Warranty")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductTypes");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Shop.Models.Warranty", b =>
@@ -117,34 +101,7 @@ namespace Shop.Migrations
 
             modelBuilder.Entity("Shop.Models.Product", b =>
                 {
-                    b.HasOne("Shop.Models.ProductType", "Type")
-                        .WithMany("Products")
-                        .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Shop.Models.Warranty", "Warranty")
-                        .WithMany("Products")
-                        .HasForeignKey("WarrantyId");
-
-                    b.Navigation("Type");
-
-                    b.Navigation("Warranty");
-                });
-
-            modelBuilder.Entity("Shop.Models.Product", b =>
-                {
                     b.Navigation("Images");
-                });
-
-            modelBuilder.Entity("Shop.Models.ProductType", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Shop.Models.Warranty", b =>
-                {
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }
