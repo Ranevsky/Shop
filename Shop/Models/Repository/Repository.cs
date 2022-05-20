@@ -19,6 +19,11 @@ public class Repository<T> : IRepository<T> where T : class
         db.Set<T>().AddRange(entity);
     }
 
+    public int Count()
+    {
+        return db.Set<T>().Count();
+    }
+
     public virtual T? Find(int id)
     {
         return db.Set<T>().Find(id);

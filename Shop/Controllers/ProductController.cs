@@ -18,7 +18,8 @@ public class ProductController : ControllerBase
         this.mapper = mapper;
     }
 
-    [HttpGet("{id:int}")]
+
+    [HttpGet("{id:int}")] // Поменять ProductView
     public ActionResult<ProductView> Get(int id)
     {
         var product = uow.Products.Find(id);
@@ -29,20 +30,27 @@ public class ProductController : ControllerBase
         product.Popularity++;
         uow.Save();
 
-        var viewProducts = mapper.Map<ProductView>(product);
-        return Ok(viewProducts);
+        var viewProduct = mapper.Map<ProductView>(product);
+        return Ok(viewProduct);
+    }
+    
+    [HttpGet("Count")]
+    public ActionResult<int> GetCount()
+    {
+        int count = uow.Products.Count();
+        return Ok(count);
     }
 
-    [HttpGet("Count/{count:int}")]
-    public ActionResult<IEnumerable<ProductView>> GetCount(int count, int begin = 1)
+    [HttpGet("Page")]
+    public ActionResult<IEnumerable<ProductCatalogView>> GetCount(int count, int page = 1)
     {
-        var products = uow.Products.Paging((begin - 1) * count, count).ToArray();
+        var products = uow.Products.Paging((page - 1) * count, count).ToArray();
         if (products.Length == 0)
         {
             return NotFound(new { message = "Products are missing" });
         }
 
-        var viewProducts = mapper.Map<ProductView[]>(products);
+        var viewProducts = mapper.Map<ProductCatalogView[]>(products);
         return Ok(viewProducts);
     }
 
@@ -53,15 +61,15 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("Popularity")]
-    public ActionResult<IEnumerable<ProductView>> GetPopularity(int count, int begin = 1)
+    public ActionResult<IEnumerable<ProductCatalogView>> GetPopularity(int count, int page = 1)
     {
-        var products = uow.Products.Paging((begin - 1) * count, count, p => p.Popularity, false).ToArray();
+        var products = uow.Products.Paging((page - 1) * count, count, p => p.Popularity, false).ToArray();
         if (products.Length == 0)
         {
             return NotFound(new { message = "Products are missing" });
         }
 
-        var viewProducts = mapper.Map<ProductView[]>(products);
+        var viewProducts = mapper.Map<ProductCatalogView[]>(products);
         return Ok(viewProducts);
     }
 }
