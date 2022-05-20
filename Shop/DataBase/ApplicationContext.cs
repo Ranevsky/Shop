@@ -7,7 +7,7 @@ namespace Shop.Database;
 public class ApplicationContext : DbContext
 {
     public DbSet<Product> Products => Set<Product>();
-    //public DbSet<Image> Images => Set<Image>();
+    public DbSet<Image> Images => Set<Image>();
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
