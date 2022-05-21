@@ -54,6 +54,19 @@ public class ProductController : ControllerBase
         return Ok(viewProducts);
     }
 
+    [HttpGet("Paging")]
+    public ActionResult<IEnumerable<ProductCatalogView>> Paging(int count, int page = 1)
+    {
+        var products = uow.Products.Paging((page - 1) * count, count).ToArray();
+        if (products.Length == 0)
+        {
+            return NotFound(new { message = "Products are missing" });
+        }
+
+        var viewProducts = mapper.Map<ProductCatalogView[]>(products);
+        return Ok(viewProducts);
+    }
+
     [HttpGet("All")]
     public ActionResult GetAll()
     {
