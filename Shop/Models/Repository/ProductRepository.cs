@@ -114,4 +114,92 @@ public class ProductRepository : Repository<Product>, IProductRepository
         }
         return isChange;
     }
+
+    public IQueryable<Product> Page(FilterAndSortModel model)
+    {
+        // model.Count
+        // model.Page
+
+        var productsQury = GetAllInclusions();
+
+        #region Filters
+        if (model.Type != null)
+        {
+            if (db.ProductTypes.FirstOrDefault(p => p.Name.ToLower() == model.Type.ToLower()) == null)
+            {
+                throw new Exception("Product type is not found");
+            }
+            productsQury = productsQury.Where(p => p.Type.Name.ToLower() == model.Type.ToLower());
+        }
+
+        if (model.PriceFilter != null)
+        {
+            if (model.PriceFilter.More != null)
+            {
+                productsQury = productsQury.Where(p => p.Price > model.PriceFilter.More);
+            }
+            if (model.PriceFilter.Less != null)
+            {
+                productsQury = productsQury.Where(p => p.Price < model.PriceFilter.Less);
+            }
+        }
+
+        if (model.Warranty != null)
+        {
+            if (model.Warranty == true)
+            {
+                productsQury = productsQury.Where(p => p.Warranty != null);
+            }
+            else
+            {
+                productsQury = productsQury.Where(p => p.Warranty == null);
+            }
+        }
+
+        if (model.IsStock != null)
+        {
+            if (model.IsStock == true)
+            {
+                productsQury = productsQury.Where(p => p.IsStock == true);
+            }
+            else
+            {
+                productsQury = productsQury.Where(p => p.IsStock == false);
+            }
+        }
+        #endregion
+
+        if (model.Sort != null)
+        {
+            Expression<Func<Product, double>> expression;
+
+            string sortType = model.Sort.Type.ToLower();
+            if (sortType == "popularity")
+            {
+                expression = p => p.Popularity;
+            }
+            else if(sortType == "price")
+            {
+                expression = p => (double) p.Price;
+            }
+            else
+            {
+                throw new Exception("Sort type is not found");
+            }
+
+            if (model.Sort.Sort_Asc == true)
+            {
+                productsQury = productsQury.OrderBy(expression);
+                Console.WriteLine("Sorting by asc");
+            }
+            else
+            {
+                productsQury = productsQury.OrderByDescending(expression);
+                Console.WriteLine("Sorting by desc");
+            }
+        }
+
+        
+        return productsQury;
+    }
 }

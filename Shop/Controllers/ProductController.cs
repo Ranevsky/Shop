@@ -41,6 +41,36 @@ public class ProductController : ControllerBase
         return Ok(count);
     }
 
+    [HttpGet("Paging")]
+    public ActionResult<Catalog> Paging([FromQuery] FilterAndSortModel model)
+    {
+        IQueryable<Product> productsQuery = null!;
+        try
+        {
+            productsQuery = uow.Products.Page(model);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+        var catalog = new Catalog();
+        catalog.CountProudcts = productsQuery.LongCount();
+
+        productsQuery = productsQuery.Skip((model.Page - 1) * model.Count).Take(model.Count);
+        var productCatalog = mapper.Map<ProductCatalogView[]>(productsQuery.ToArray());
+
+        catalog.Products = productCatalog;
+
+        return Ok(catalog);
+    }
+
+    [HttpGet("All")]
+    public ActionResult GetAll()
+    {
+        return RedirectToAction("Page", "Product", new {count = -1, page = 1});
+    }
+
     [HttpGet("Page")]
     public ActionResult<IEnumerable<ProductCatalogView>> Page(int count, int page = 1)
     {
@@ -52,25 +82,6 @@ public class ProductController : ControllerBase
 
         var viewProducts = mapper.Map<ProductCatalogView[]>(products);
         return Ok(viewProducts);
-    }
-
-    [HttpGet("Paging")]
-    public ActionResult<IEnumerable<ProductCatalogView>> Paging(int count, int page = 1)
-    {
-        var products = uow.Products.Paging((page - 1) * count, count).ToArray();
-        if (products.Length == 0)
-        {
-            return NotFound(new { message = "Products are missing" });
-        }
-
-        var viewProducts = mapper.Map<ProductCatalogView[]>(products);
-        return Ok(viewProducts);
-    }
-
-    [HttpGet("All")]
-    public ActionResult GetAll()
-    {
-        return RedirectToAction("Page", "Product", new {count = -1, page = 1});
     }
 
     [HttpGet("Popularity")]

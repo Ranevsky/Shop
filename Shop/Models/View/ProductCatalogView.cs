@@ -8,3 +8,10 @@ public class ProductCatalogView
     public decimal Price { get; set; }
     public string? Image { get; set; }
 }
+
+
+public class Catalog
+{
+    public IEnumerable<ProductCatalogView>? Products { get; set; }
+    public long CountProudcts { get; set; }
+}
