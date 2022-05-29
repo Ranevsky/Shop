@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+
 using Shop.Models.View;
 
 namespace Shop.Models;
@@ -36,21 +37,21 @@ public class AutoMapping : Profile
                 opt.MapFrom(i => Convert.ImageToString(i));
             });
     }
-    static internal class Convert
+    internal static class Convert
     {
-        static internal string? FirstImageToString(IEnumerable<Image> images)
+        internal static string? FirstImageToString(IEnumerable<Image> images)
         {
-            var image = images.FirstOrDefault();
+            Image? image = images.FirstOrDefault();
 
             return image == null ? null : ImageToString(image);
 
         }
-        static internal string ImageToString(Image image)
+        internal static string ImageToString(Image image)
         {
             return $"{Program.applicationUrl}{Program.ImageUrl}/{image.Name}";
 
         }
-        static internal string? WarrantyToString(Warranty? warranty)
+        internal static string? WarrantyToString(Warranty? warranty)
         {
             return warranty?.Description ?? null;
         }

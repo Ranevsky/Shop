@@ -1,11 +1,13 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+
 using Newtonsoft.Json.Linq;
+
 using Shop.Extensions;
-using Shop.Database;
+
+
 namespace Shop;
 
-class Program
+internal class Program
 {
     public static IConfiguration Configuration = null!;
     public static string PathToImages = null!;
@@ -20,7 +22,7 @@ class Program
         }
 
         string text = File.ReadAllText(path);
-        var json = JObject.Parse(text);
+        JObject? json = JObject.Parse(text);
         applicationUrl = json["profiles"]!["Shop"]!["applicationUrl"]!.ToString().Split(';')[0];
     }
     private static void GetPathToImages()
@@ -36,32 +38,30 @@ class Program
             // If the folder is not created and suddenly it is expected that there will be files
             throw new Exception($"Not exist '{PathToImages}', please create directory");
         }
-        
+
     }
-    static void Main(string[] args)
+
+    private static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
         Configuration = builder.Configuration;
         GetPathToImages();
         GetApplicationUrl();
-        // Services
-        
-        
-        builder.Services
-            .AddCors()
-            .AddSwaggerGen()
-            .AddAutoMapper(typeof(Program))
-            .AddUnitOfWork()
-            .AddEndpointsApiExplorer()
-            .AddDbContext<ApplicationContext>(option =>
-            {
-                string connection = Configuration.GetConnectionString("DefaultConnection");
-                option.UseSqlite(connection);
-            })
-            .AddControllers();
 
-        var app = builder.Build();
+        // Services
+
+        builder.Services.AddCors();
+        builder.Services.AddSwaggerGen();
+        builder.Services.AddAutoMapper(typeof(Program));
+        builder.Services.AddUnitOfWork();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddApplicationContext();
+        builder.Services.AddControllers();
+
+        WebApplication? app = builder.Build();
+
         // middlewares
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

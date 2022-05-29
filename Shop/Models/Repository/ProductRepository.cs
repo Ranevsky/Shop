@@ -1,30 +1,25 @@
 ﻿using System.Linq.Expressions;
+
 using Microsoft.EntityFrameworkCore;
+
 using Shop.Database;
 
 namespace Shop.Models.Repository;
 
 public class ProductRepository : Repository<Product>, IProductRepository
 {
-    public ProductRepository(ApplicationContext db) : base(db) 
+    public ProductRepository(ApplicationContext db) : base(db)
     {
 
     }
 
     public IEnumerable<Product> Paging<TKey>(int skip, int take, Expression<Func<Product, TKey>> order, bool asc = true)
     {
-        var queryProducts = GetAllInclusions();
+        IQueryable<Product>? queryProducts = GetAllInclusions();
 
-        if (asc)
-        {
-            queryProducts = queryProducts.OrderBy(order);
-        }
-        else
-        {
-            queryProducts = queryProducts.OrderByDescending(order);
-        }
+        queryProducts = asc ? queryProducts.OrderBy(order) : queryProducts.OrderByDescending(order);
 
-        var products = queryProducts
+        Product[]? products = queryProducts
             .Skip(skip)
             .Take(take)
             .ToArray();
@@ -35,7 +30,7 @@ public class ProductRepository : Repository<Product>, IProductRepository
     }
     public IEnumerable<Product> Paging(int skip, int take)
     {
-        var products = GetAllInclusions()
+        Product[]? products = GetAllInclusions()
             .Skip(skip)
             .Take(take)
             .ToArray();
@@ -46,8 +41,8 @@ public class ProductRepository : Repository<Product>, IProductRepository
     }
     public override Product? Find(int id)
     {
-        var products = GetAllInclusions();
-        var product = products.FirstOrDefault(i => i.Id == id);
+        IQueryable<Product>? products = GetAllInclusions();
+        Product? product = products.FirstOrDefault(i => i.Id == id);
         if (product != null)
         {
             CheckingImageExists(product);
@@ -56,11 +51,11 @@ public class ProductRepository : Repository<Product>, IProductRepository
     }
     public override IEnumerable<Product> GetAll()
     {
-        var products = GetAllInclusions();
+        IQueryable<Product>? products = GetAllInclusions();
         return products;
     }
-    
-    
+
+
     private IQueryable<Product> GetAllInclusions()
     {
         return db.Products
@@ -71,7 +66,7 @@ public class ProductRepository : Repository<Product>, IProductRepository
     private void CheckingImageExists(params Product[] products)
     {
         bool isChange = false;
-        foreach (var product in products)
+        foreach (Product? product in products)
         {
             if (!isChange)
             {
@@ -86,13 +81,13 @@ public class ProductRepository : Repository<Product>, IProductRepository
             db.SaveChanges();
         }
     }
-    private bool IsNeedDeleteImage(ICollection<Image> images)
+    static private bool IsNeedDeleteImage(ICollection<Image> images)
     {
         bool isChange = false;
         string filePath;
         List<Image> removeList = new();
-        
-        foreach(var image in images)
+
+        foreach (Image? image in images)
         {
             try
             {
@@ -108,7 +103,7 @@ public class ProductRepository : Repository<Product>, IProductRepository
                 isChange = true;
             }
         }
-        foreach (var item in removeList)
+        foreach (Image? item in removeList)
         {
             images.Remove(item);
         }
@@ -117,10 +112,7 @@ public class ProductRepository : Repository<Product>, IProductRepository
 
     public IQueryable<Product> Page(FilterAndSortModel model)
     {
-        // model.Count
-        // model.Page
-
-        var productsQury = GetAllInclusions();
+        IQueryable<Product>? productsQury = GetAllInclusions();
 
         #region Filters
         if (model.Type != null)
@@ -146,26 +138,16 @@ public class ProductRepository : Repository<Product>, IProductRepository
 
         if (model.Warranty != null)
         {
-            if (model.Warranty == true)
-            {
-                productsQury = productsQury.Where(p => p.Warranty != null);
-            }
-            else
-            {
-                productsQury = productsQury.Where(p => p.Warranty == null);
-            }
+            productsQury = model.Warranty == true ? 
+                productsQury.Where(p => p.Warranty != null) : 
+                productsQury.Where(p => p.Warranty == null);
         }
 
         if (model.IsStock != null)
         {
-            if (model.IsStock == true)
-            {
-                productsQury = productsQury.Where(p => p.IsStock == true);
-            }
-            else
-            {
-                productsQury = productsQury.Where(p => p.IsStock == false);
-            }
+            productsQury = model.IsStock == true ? 
+                productsQury.Where(p => p.IsStock == true) :
+                productsQury.Where(p => p.IsStock == false);
         }
         #endregion
 
@@ -174,17 +156,24 @@ public class ProductRepository : Repository<Product>, IProductRepository
             Expression<Func<Product, double>> expression;
 
             string sortType = model.Sort.Type.ToLower();
-            if (sortType == "popularity")
+            switch (sortType)
             {
-                expression = p => p.Popularity;
-            }
-            else if(sortType == "price")
-            {
-                expression = p => (double) p.Price;
-            }
-            else
-            {
-                throw new Exception("Sort type is not found");
+                case "popularity":
+                {
+                    expression = p => p.Popularity;
+                    break;
+                }
+
+                case "price":
+                {
+                    expression = p => (double)p.Price;
+                    break;
+                }
+
+                default:
+                {
+                    throw new Exception("Sort type is not found");
+                }
             }
 
             if (model.Sort.Sort_Asc == true)
@@ -199,7 +188,7 @@ public class ProductRepository : Repository<Product>, IProductRepository
             }
         }
 
-        
+
         return productsQury;
     }
 }

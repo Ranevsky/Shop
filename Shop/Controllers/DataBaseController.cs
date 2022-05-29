@@ -1,6 +1,7 @@
-﻿using Shop.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+
+using Shop.Models;
 using Shop.Models.Repository;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Shop.Controllers;
 
@@ -29,7 +30,7 @@ public class DataBaseController : ControllerBase
         uow.Save();
         return Ok(new { message = "Products created" });
     }
-    
+
     [HttpPut]
     public ActionResult<Product> ChangeProduct(Product product)
     {

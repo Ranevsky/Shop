@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Shop.Models;
+﻿namespace Shop.Models;
 
 public class Product
 {
-    [Key]
     public int Id { get; set; }
     public string Name { get; set; } = null!;
     public ProductType Type { get; set; } = null!;
@@ -16,4 +13,3 @@ public class Product
     public Warranty? Warranty { get; set; }
     public bool IsStock { get; set; }
 }
-
