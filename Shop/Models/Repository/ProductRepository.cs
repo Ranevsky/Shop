@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Shop.Models.Repository;
 
-public class ProductRepository : Repository<Product>, IProductRepository
+public sealed class ProductRepository : Repository<Product>, IProductRepository
 {
     public ProductRepository(ApplicationContext db) : base(db)
     {

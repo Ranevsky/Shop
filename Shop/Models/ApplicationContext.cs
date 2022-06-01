@@ -2,7 +2,7 @@
 
 namespace Shop.Models;
 
-public class ApplicationContext : DbContext
+public sealed class ApplicationContext : DbContext
 {
     public DbSet<Product> Products => Set<Product>();
     public DbSet<ProductType> ProductTypes => Set<ProductType>();

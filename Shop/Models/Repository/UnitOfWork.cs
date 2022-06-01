@@ -1,6 +1,6 @@
 ﻿namespace Shop.Models.Repository;
 
-public class UnitOfWork : IUnitOfWork
+public sealed class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationContext db;
     private IProductRepository productRepository = null!;
@@ -27,7 +27,7 @@ public class UnitOfWork : IUnitOfWork
     }
 
     private bool disposed = false;
-    public virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (!disposed)
         {

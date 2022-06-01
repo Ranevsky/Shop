@@ -1,6 +1,6 @@
 ﻿namespace Shop.Models.View;
 
-public class ProductView
+public sealed class ProductView
 {
     public string Name { get; set; } = null!;
     public string ProductType { get; set; } = null!;

@@ -2,7 +2,7 @@
 
 namespace Shop.Models;
 
-public class Warranty
+public sealed class Warranty
 {
     public int Id { get; set; }
     [JsonIgnore]

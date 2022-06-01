@@ -4,7 +4,7 @@ using Shop.Models.View;
 
 namespace Shop.Models;
 
-public class AutoMapping : Profile
+public sealed class AutoMapping : Profile
 {
     public AutoMapping()
     {

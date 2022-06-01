@@ -7,7 +7,7 @@ namespace Shop.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class DataBaseController : ControllerBase
+public sealed class DataBaseController : ControllerBase
 {
     private readonly IUnitOfWork uow;
     public DataBaseController(IUnitOfWork uow)

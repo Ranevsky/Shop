@@ -2,7 +2,7 @@
 
 namespace Shop.Models;
 
-public class ProductType
+public sealed class ProductType
 {
     public int Id { get; set; }
     [JsonIgnore]

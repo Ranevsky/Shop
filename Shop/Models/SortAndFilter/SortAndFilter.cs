@@ -1,6 +1,6 @@
 ﻿namespace Shop.Models;
 
-public class SortAndFilter
+public sealed class SortAndFilter
 {
     public int Count { get; set; } = 1;
     public int Page { get; set; } = 1;

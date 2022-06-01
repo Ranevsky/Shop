@@ -10,7 +10,7 @@ namespace Shop.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ProductController : ControllerBase
+public sealed class ProductController : ControllerBase
 {
     private readonly IUnitOfWork uow;
     private readonly IMapper mapper;
@@ -22,7 +22,7 @@ public class ProductController : ControllerBase
 
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ProductView>> Get(int id)
+    public async Task<ActionResult<ProductView>> GetProductView(int id)
     {
         Product? product = await uow.Products.FindAsync(id);
         if (product == null)

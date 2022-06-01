@@ -7,7 +7,7 @@ using Shop.Extensions;
 
 namespace Shop;
 
-internal class Program
+internal sealed class Program
 {
     public static IConfiguration Configuration = null!;
     public static string PathToImages = null!;
