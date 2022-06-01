@@ -16,26 +16,26 @@ public class DataBaseController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult AddProduct(Product product)
+    public async Task<ActionResult> AddProduct(Product product)
     {
-        uow.Products.Add(product);
-        uow.Save();
+        await uow.Products.AddAsync(product);
+        await uow.SaveAsync();
         return Ok(new { message = "Product created" });
     }
 
     [HttpPost("Range")]
-    public ActionResult AddRangeProduct(Product[] products)
+    public async Task<ActionResult> AddRangeProduct(Product[] products)
     {
-        uow.Products.AddRange(products);
-        uow.Save();
+        await uow.Products.AddRangeAsync(products);
+        await uow.SaveAsync();
         return Ok(new { message = "Products created" });
     }
 
     [HttpPut]
-    public ActionResult<Product> ChangeProduct(Product product)
+    public async Task<ActionResult<Product>> ChangeProduct(Product product)
     {
         uow.Products.Update(product);
-        uow.Save();
+        await uow.SaveAsync();
         return product;
     }
 }

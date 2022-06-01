@@ -11,13 +11,13 @@ public class ProductRepository : Repository<Product>, IProductRepository
 
     }
 
-    public override Product? Find(int id)
+    public async new Task<Product?> FindAsync(int id)
     {
         IQueryable<Product>? products = GetAllInclusions();
-        Product? product = products.FirstOrDefault(i => i.Id == id);
+        Product? product = await products.FirstOrDefaultAsync(i => i.Id == id);
         if (product != null)
         {
-            CheckingImageExists(product);
+            await CheckingImageExists(product);
         }
         return product;
     }
@@ -26,14 +26,14 @@ public class ProductRepository : Repository<Product>, IProductRepository
         IQueryable<Product>? products = GetAllInclusions();
         return products;
     }
-    public IQueryable<Product> Paging(SortAndFilter model)
+    public async Task<IQueryable<Product>> Paging(SortAndFilter model)
     {
         IQueryable<Product>? productsQury = GetCatalogInclusions();
 
         #region Filters
         if (model.Type != null)
         {
-            if (db.ProductTypes.FirstOrDefault(p => p.Name.ToLower() == model.Type.ToLower()) == null)
+            if (await db.ProductTypes.FirstOrDefaultAsync(p => p.Name.ToLower() == model.Type.ToLower()) == null)
             {
                 throw new Exception("Product type is not found");
             }
@@ -95,12 +95,10 @@ public class ProductRepository : Repository<Product>, IProductRepository
             if (model.Sort.Sort_Asc == true)
             {
                 productsQury = productsQury.OrderBy(expression);
-                Console.WriteLine("Sorting by asc");
             }
             else
             {
                 productsQury = productsQury.OrderByDescending(expression);
-                Console.WriteLine("Sorting by desc");
             }
         }
 
@@ -123,7 +121,7 @@ public class ProductRepository : Repository<Product>, IProductRepository
             .Include(p => p.Type)
             .Include(p => p.Images);
     }
-    private void CheckingImageExists(params Product[] products)
+    private async Task CheckingImageExists(params Product[] products)
     {
         bool isChange = false;
         foreach (Product? product in products)
@@ -135,7 +133,7 @@ public class ProductRepository : Repository<Product>, IProductRepository
         }
         if (isChange)
         {
-            db.SaveChanges();
+            await db.SaveChangesAsync();
         }
     }
 }

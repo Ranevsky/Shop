@@ -22,15 +22,15 @@ public class ProductController : ControllerBase
 
 
     [HttpGet("{id:int}")]
-    public ActionResult<ProductView> Get(int id)
+    public async Task<ActionResult<ProductView>> Get(int id)
     {
-        Product? product = uow.Products.Find(id);
+        Product? product = await uow.Products.FindAsync(id);
         if (product == null)
         {
             return NotFound(new { message = "Not found" });
         }
         product.Popularity++;
-        uow.Save();
+        await uow.SaveAsync();
 
         ProductView? viewProduct = mapper.Map<ProductView>(product);
         return Ok(viewProduct);
@@ -42,7 +42,7 @@ public class ProductController : ControllerBase
         IQueryable<Product> productsQuery;
         try
         {
-            productsQuery = uow.Products.Paging(model);
+            productsQuery = uow.Products.Paging(model).Result;
         }
         catch (Exception ex)
         {

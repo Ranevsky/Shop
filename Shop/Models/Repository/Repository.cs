@@ -2,22 +2,23 @@
 
 public class Repository<T> : IRepository<T> where T : class
 {
+    // db.Set<T>()
     protected readonly ApplicationContext db;
     public Repository(ApplicationContext db)
     {
         this.db = db;
     }
-    public void Add(T entity)
+    public async Task AddAsync(T entity)
     {
-        db.Set<T>().Add(entity);
+        await db.Set<T>().AddAsync(entity);
     }
-    public void AddRange(IEnumerable<T> entity)
+    public async Task AddRangeAsync(IEnumerable<T> entity)
     {
-        db.Set<T>().AddRange(entity);
+        await db.Set<T>().AddRangeAsync(entity);
     }
-    public virtual T? Find(int id)
+    public T? FindAsync(int id)
     {
-        return db.Set<T>().Find(id);
+        return db.Set<T>().FindAsync().Result;
     }
     public virtual IEnumerable<T> GetAll()
     {

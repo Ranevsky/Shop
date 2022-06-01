@@ -2,7 +2,7 @@
 
 public interface IUnitOfWork : IDisposable
 {
-    public IProductRepository Products { get; }
-    void Save();
+    IProductRepository Products { get; }
+    Task SaveAsync();
 
 }
