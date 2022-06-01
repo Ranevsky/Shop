@@ -11,7 +11,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
 
     }
 
-    public async new Task<Product?> FindAsync(int id)
+    public new async Task<Product?> FindAsync(int id)
     {
         IQueryable<Product>? products = GetAllInclusions();
         Product? product = await products.FirstOrDefaultAsync(i => i.Id == id);
@@ -92,14 +92,9 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
                 }
             }
 
-            if (model.Sort.Sort_Asc == true)
-            {
-                productsQury = productsQury.OrderBy(expression);
-            }
-            else
-            {
-                productsQury = productsQury.OrderByDescending(expression);
-            }
+            productsQury = model.Sort.Sort_Asc == true ?
+                productsQury.OrderBy(expression) :
+                productsQury.OrderByDescending(expression);
         }
 
 

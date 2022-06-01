@@ -1,6 +1,6 @@
-using Microsoft.Extensions.FileProviders;
+using System.Text.Json.Nodes;
 
-using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.FileProviders;
 
 using Shop.Extensions;
 
@@ -22,13 +22,18 @@ internal sealed class Program
         }
 
         string text = File.ReadAllText(path);
-        JObject? json = JObject.Parse(text);
-        applicationUrl = json["profiles"]!["Shop"]!["applicationUrl"]!.ToString().Split(';')[0];
+
+        JsonNode js = JsonNode.Parse(text)!;
+        string? applicationUr = js["profiles"]?["Shop"]?["applicationUrl"]?.ToString().Split(';')[0]
+            ?? throw new Exception("file 'launchSettings.json' configured incorrectly, path not found (profiles -> Shop -> applicationUrl)");
+
+        applicationUrl = applicationUr;
     }
+
     private static void GetPathToImages()
     {
         string pathToImages = Configuration.GetValue<string>("PathToImages");
-        if (pathToImages == "")
+        if (string.IsNullOrEmpty(pathToImages))
         {
             throw new Exception("Enter in 'appsetings.json' path to images");
         }
