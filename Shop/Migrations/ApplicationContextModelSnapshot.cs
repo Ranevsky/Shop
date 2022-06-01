@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Shop.Database;
+using Shop.Models;
 
 #nullable disable
 
@@ -17,6 +17,41 @@ namespace Shop.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
 
+            modelBuilder.Entity("Shop.Models.Characteristic", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Characteristics");
+                });
+
+            modelBuilder.Entity("Shop.Models.Description", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Descriptions");
+                });
+
             modelBuilder.Entity("Shop.Models.Image", b =>
                 {
                     b.Property<int>("Id")
@@ -27,7 +62,7 @@ namespace Shop.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ProductId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -43,12 +78,8 @@ namespace Shop.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Characteristic")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("DescriptionId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsStock")
                         .HasColumnType("INTEGER");
@@ -70,6 +101,8 @@ namespace Shop.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DescriptionId");
 
                     b.HasIndex("TypeId");
 
@@ -108,15 +141,30 @@ namespace Shop.Migrations
                     b.ToTable("Warranties");
                 });
 
-            modelBuilder.Entity("Shop.Models.Image", b =>
+            modelBuilder.Entity("Shop.Models.Characteristic", b =>
                 {
                     b.HasOne("Shop.Models.Product", null)
-                        .WithMany("Images")
+                        .WithMany("Characteristics")
                         .HasForeignKey("ProductId");
+                });
+
+            modelBuilder.Entity("Shop.Models.Image", b =>
+                {
+                    b.HasOne("Shop.Models.Product", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Shop.Models.Product", b =>
                 {
+                    b.HasOne("Shop.Models.Description", "Description")
+                        .WithMany()
+                        .HasForeignKey("DescriptionId");
+
                     b.HasOne("Shop.Models.ProductType", "Type")
                         .WithMany("Products")
                         .HasForeignKey("TypeId")
@@ -127,6 +175,8 @@ namespace Shop.Migrations
                         .WithMany("Products")
                         .HasForeignKey("WarrantyId");
 
+                    b.Navigation("Description");
+
                     b.Navigation("Type");
 
                     b.Navigation("Warranty");
@@ -134,6 +184,8 @@ namespace Shop.Migrations
 
             modelBuilder.Entity("Shop.Models.Product", b =>
                 {
+                    b.Navigation("Characteristics");
+
                     b.Navigation("Images");
                 });
 

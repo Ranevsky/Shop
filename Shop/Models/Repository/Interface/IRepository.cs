@@ -7,5 +7,4 @@ public interface IRepository<T> where T : class
     void Add(T entity);
     void AddRange(IEnumerable<T> entity);
     void Update(T entity);
-    int Count();
 }

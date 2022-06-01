@@ -15,11 +15,21 @@ public class AutoMapping : Profile
             })
             .ForMember(p => p.Warranty, opt =>
             {
-                opt.MapFrom(p => Convert.WarrantyToString(p.Warranty));
+                opt.MapFrom(p => p.Warranty == null ? null : p.Warranty.Description);
+            })
+            .ForMember(p => p.Description, opt =>
+            {
+                opt.MapFrom(p => p.Description == null ? null : p.Description.Text);
+            })
+            .ForMember(p => p.Characteristic, opt =>
+            {
+                opt.MapFrom(p => p.Characteristics);
             });
 
+        CreateMap<Characteristic, string>()
+            .ConvertUsing(p => p.Description);
 
-        CreateMap<Product, ProductCatalogView>()
+        CreateMap<Product, ProductInCatalogView>()
             .ForMember(p => p.Image, opt =>
             {
                 opt.MapFrom(p => Convert.FirstImageToString(p.Images));
@@ -50,10 +60,6 @@ public class AutoMapping : Profile
         {
             return $"{Program.applicationUrl}{Program.ImageUrl}/{image.Name}";
 
-        }
-        internal static string? WarrantyToString(Warranty? warranty)
-        {
-            return warranty?.Description ?? null;
         }
 
     }

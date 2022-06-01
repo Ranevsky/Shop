@@ -2,8 +2,6 @@
 
 using Microsoft.EntityFrameworkCore;
 
-using Shop.Database;
-
 namespace Shop.Models.Repository;
 
 public class ProductRepository : Repository<Product>, IProductRepository
@@ -13,32 +11,6 @@ public class ProductRepository : Repository<Product>, IProductRepository
 
     }
 
-    public IEnumerable<Product> Paging<TKey>(int skip, int take, Expression<Func<Product, TKey>> order, bool asc = true)
-    {
-        IQueryable<Product>? queryProducts = GetAllInclusions();
-
-        queryProducts = asc ? queryProducts.OrderBy(order) : queryProducts.OrderByDescending(order);
-
-        Product[]? products = queryProducts
-            .Skip(skip)
-            .Take(take)
-            .ToArray();
-
-        CheckingImageExists(products);
-
-        return products.AsEnumerable();
-    }
-    public IEnumerable<Product> Paging(int skip, int take)
-    {
-        Product[]? products = GetAllInclusions()
-            .Skip(skip)
-            .Take(take)
-            .ToArray();
-
-        CheckingImageExists(products);
-
-        return products.AsEnumerable();
-    }
     public override Product? Find(int id)
     {
         IQueryable<Product>? products = GetAllInclusions();
@@ -54,65 +26,9 @@ public class ProductRepository : Repository<Product>, IProductRepository
         IQueryable<Product>? products = GetAllInclusions();
         return products;
     }
-
-
-    private IQueryable<Product> GetAllInclusions()
+    public IQueryable<Product> Paging(SortAndFilter model)
     {
-        return db.Products
-            .Include(p => p.Images)
-            .Include(p => p.Type)
-            .Include(p => p.Warranty);
-    }
-    private void CheckingImageExists(params Product[] products)
-    {
-        bool isChange = false;
-        foreach (Product? product in products)
-        {
-            if (!isChange)
-            {
-                isChange = IsNeedDeleteImage(product.Images);
-                continue;
-            }
-            IsNeedDeleteImage(product.Images);
-        }
-
-        if (isChange)
-        {
-            db.SaveChanges();
-        }
-    }
-    static private bool IsNeedDeleteImage(ICollection<Image> images)
-    {
-        bool isChange = false;
-        string filePath;
-        List<Image> removeList = new();
-
-        foreach (Image? image in images)
-        {
-            try
-            {
-                filePath = $"{Program.PathToImages}/{image.Name}";
-                if (!File.Exists(filePath))
-                {
-                    throw new Exception($"'{filePath}' not found");
-                }
-            }
-            catch
-            {
-                removeList.Add(image);
-                isChange = true;
-            }
-        }
-        foreach (Image? item in removeList)
-        {
-            images.Remove(item);
-        }
-        return isChange;
-    }
-
-    public IQueryable<Product> Page(FilterAndSortModel model)
-    {
-        IQueryable<Product>? productsQury = GetAllInclusions();
+        IQueryable<Product>? productsQury = GetCatalogInclusions();
 
         #region Filters
         if (model.Type != null)
@@ -138,14 +54,14 @@ public class ProductRepository : Repository<Product>, IProductRepository
 
         if (model.Warranty != null)
         {
-            productsQury = model.Warranty == true ? 
-                productsQury.Where(p => p.Warranty != null) : 
+            productsQury = model.Warranty == true ?
+                productsQury.Where(p => p.Warranty != null) :
                 productsQury.Where(p => p.Warranty == null);
         }
 
         if (model.IsStock != null)
         {
-            productsQury = model.IsStock == true ? 
+            productsQury = model.IsStock == true ?
                 productsQury.Where(p => p.IsStock == true) :
                 productsQury.Where(p => p.IsStock == false);
         }
@@ -190,5 +106,36 @@ public class ProductRepository : Repository<Product>, IProductRepository
 
 
         return productsQury;
+    }
+
+    private IQueryable<Product> GetAllInclusions()
+    {
+        return db.Products
+            .Include(p => p.Description)
+            .Include(p => p.Characteristics)
+            .Include(p => p.Images)
+            .Include(p => p.Type)
+            .Include(p => p.Warranty);
+    }
+    private IQueryable<Product> GetCatalogInclusions()
+    {
+        return db.Products
+            .Include(p => p.Type)
+            .Include(p => p.Images);
+    }
+    private void CheckingImageExists(params Product[] products)
+    {
+        bool isChange = false;
+        foreach (Product? product in products)
+        {
+            if (product.IsNeedDeleteImage())
+            {
+                isChange = true;
+            }
+        }
+        if (isChange)
+        {
+            db.SaveChanges();
+        }
     }
 }

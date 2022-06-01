@@ -11,13 +11,48 @@ using Shop.Models;
 namespace Shop.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220520181413_change_warranty")]
-    partial class change_warranty
+    [Migration("20220601153429_Add_Descriptions")]
+    partial class Add_Descriptions
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.4");
+
+            modelBuilder.Entity("Shop.Models.Characteristic", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Characteristics");
+                });
+
+            modelBuilder.Entity("Shop.Models.Description", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Descriptions");
+                });
 
             modelBuilder.Entity("Shop.Models.Image", b =>
                 {
@@ -29,7 +64,7 @@ namespace Shop.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ProductId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -45,12 +80,8 @@ namespace Shop.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Characteristic")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("DescriptionId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsStock")
                         .HasColumnType("INTEGER");
@@ -65,18 +96,36 @@ namespace Shop.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ProductType")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("TypeId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("WarrantyId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DescriptionId");
+
+                    b.HasIndex("TypeId");
+
                     b.HasIndex("WarrantyId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Shop.Models.ProductType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductTypes");
                 });
 
             modelBuilder.Entity("Shop.Models.Warranty", b =>
@@ -94,25 +143,57 @@ namespace Shop.Migrations
                     b.ToTable("Warranties");
                 });
 
-            modelBuilder.Entity("Shop.Models.Image", b =>
+            modelBuilder.Entity("Shop.Models.Characteristic", b =>
                 {
                     b.HasOne("Shop.Models.Product", null)
-                        .WithMany("Images")
+                        .WithMany("Characteristics")
                         .HasForeignKey("ProductId");
+                });
+
+            modelBuilder.Entity("Shop.Models.Image", b =>
+                {
+                    b.HasOne("Shop.Models.Product", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Shop.Models.Product", b =>
                 {
+                    b.HasOne("Shop.Models.Description", "Description")
+                        .WithMany()
+                        .HasForeignKey("DescriptionId");
+
+                    b.HasOne("Shop.Models.ProductType", "Type")
+                        .WithMany("Products")
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Shop.Models.Warranty", "Warranty")
                         .WithMany("Products")
                         .HasForeignKey("WarrantyId");
+
+                    b.Navigation("Description");
+
+                    b.Navigation("Type");
 
                     b.Navigation("Warranty");
                 });
 
             modelBuilder.Entity("Shop.Models.Product", b =>
                 {
+                    b.Navigation("Characteristics");
+
                     b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("Shop.Models.ProductType", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Shop.Models.Warranty", b =>

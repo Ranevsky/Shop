@@ -1,6 +1,4 @@
-﻿using Shop.Database;
-
-namespace Shop.Models.Repository;
+﻿namespace Shop.Models.Repository;
 
 public class UnitOfWork : IUnitOfWork
 {
@@ -27,7 +25,6 @@ public class UnitOfWork : IUnitOfWork
     {
         db.SaveChanges();
     }
-
 
     private bool disposed = false;
     public virtual void Dispose(bool disposing)

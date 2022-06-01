@@ -37,22 +37,22 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("Paging")]
-    public ActionResult<Catalog> Paging([FromQuery] FilterAndSortModel model)
+    public ActionResult<CatalogView> Paging([FromQuery] SortAndFilter model)
     {
         IQueryable<Product> productsQuery;
         try
         {
-            productsQuery = uow.Products.Page(model);
+            productsQuery = uow.Products.Paging(model);
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
 
-        Catalog? catalog = new() { CountProudcts = productsQuery.LongCount() };
+        CatalogView? catalog = new() { CountProudcts = productsQuery.LongCount() };
 
         productsQuery = productsQuery.Skip((model.Page - 1) * model.Count).Take(model.Count);
-        ProductCatalogView[]? productCatalog = mapper.Map<ProductCatalogView[]>(productsQuery.ToArray());
+        ProductInCatalogView[]? productCatalog = mapper.Map<ProductInCatalogView[]>(productsQuery.ToArray());
 
         catalog.Products = productCatalog;
 
