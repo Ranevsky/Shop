@@ -4,9 +4,7 @@
 
 namespace Shop.Migrations;
 
-#pragma warning disable IDE1006 // Naming Styles
 public partial class addIsStockfield : Migration
-#pragma warning restore IDE1006 // Naming Styles
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {

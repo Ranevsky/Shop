@@ -3,5 +3,4 @@
 public interface IProductRepository : IRepository<Product>
 {
     Task<IQueryable<Product>> Paging(SortAndFilter model);
-    new Task<Product?> FindAsync(int id);
 }

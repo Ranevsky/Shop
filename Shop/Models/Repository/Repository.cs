@@ -16,9 +16,9 @@ public class Repository<T> : IRepository<T> where T : class
     {
         await db.Set<T>().AddRangeAsync(entity);
     }
-    public T? FindAsync(int id)
+    public virtual async Task<T?> FindAsync(int id)
     {
-        return db.Set<T>().FindAsync().Result;
+        return await db.Set<T>().FindAsync();
     }
     public virtual IEnumerable<T> GetAll()
     {

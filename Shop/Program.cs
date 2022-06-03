@@ -29,7 +29,6 @@ internal sealed class Program
 
         applicationUrl = applicationUr;
     }
-
     private static void GetPathToImages()
     {
         string pathToImages = Configuration.GetValue<string>("PathToImages");
@@ -45,6 +44,10 @@ internal sealed class Program
         }
 
     }
+    private static string GetXmlCommentsPath()
+    {
+        return $"{Directory.GetCurrentDirectory()}/Documentation.XML";
+    }
 
     private static void Main(string[] args)
     {
@@ -55,13 +58,16 @@ internal sealed class Program
 
         // Services
 
-        builder.Services.AddCors();
-        builder.Services.AddSwaggerGen();
-        builder.Services.AddAutoMapper(typeof(Program));
-        builder.Services.AddUnitOfWork();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddApplicationContext();
-        builder.Services.AddControllers();
+        builder.Services.AddCors()
+            .AddSwaggerGen(opt =>
+            {
+                opt.IncludeXmlComments(GetXmlCommentsPath());
+            })
+            .AddAutoMapper(typeof(Program))
+            .AddUnitOfWork()
+            .AddEndpointsApiExplorer()
+            .AddApplicationContext()
+            .AddControllers();
 
         WebApplication? app = builder.Build();
 

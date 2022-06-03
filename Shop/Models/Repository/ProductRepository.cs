@@ -11,7 +11,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
 
     }
 
-    public new async Task<Product?> FindAsync(int id)
+    public override async Task<Product?> FindAsync(int id)
     {
         IQueryable<Product>? products = GetAllInclusions();
         Product? product = await products.FirstOrDefaultAsync(i => i.Id == id);
@@ -66,7 +66,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
                 productsQury.Where(p => p.IsStock == false);
         }
         #endregion
-
+        #region Sorts
         if (model.Sort != null)
         {
             Expression<Func<Product, double>> expression;
@@ -96,7 +96,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
                 productsQury.OrderBy(expression) :
                 productsQury.OrderByDescending(expression);
         }
-
+        #endregion
 
         return productsQury;
     }
@@ -104,6 +104,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
     private IQueryable<Product> GetAllInclusions()
     {
         return db.Products
+            //.AsSplitQuery() // If there is a very large duplicate database
             .Include(p => p.Description)
             .Include(p => p.Characteristics)
             .Include(p => p.Images)

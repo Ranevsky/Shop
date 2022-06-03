@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Shop</name>
+    </assembly>
+    <members>
+        <member name="T:Shop.Controllers.DataBaseController">
+            <summary>
+            Not to use, was created as debugging
+            </summary>
+        </member>
+        <member name="M:Shop.Controllers.DataBaseController.AddProduct(Shop.Models.Product)">
+            <summary>
+            Creates new products
+            </summary>
+            <param name="product">Product</param>
+            <returns>Rerturns ActionResult</returns>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:Shop.Controllers.DataBaseController.AddRangeProduct(Shop.Models.Product[])">
+            <summary>
+            Creates multiple products
+            </summary>
+            <param name="products"></param>
+            <returns>Returns ActionResult</returns>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:Shop.Controllers.DataBaseController.ChangeProduct(Shop.Models.Product)">
+            <summary>
+            Updates product
+            </summary>
+            <param name="product">Product</param>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductController.GetProductView(System.Int32)">
+            <summary>
+            Get product
+            </summary>
+            <param name="id">Product id</param>
+            <returns>Returns ProductView</returns>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductController.Paging(Shop.Models.SortAndFilter)">
+            <summary>
+            Gets products after sorting and filtering
+            </summary>
+            <param name="model">Sorting and filter model</param>
+            <returns>Returns CatalogView</returns>
+            <response code="200">Success</response>
+            <response code="400">Bad Request</response>
+        </member>
+        <member name="P:Shop.Models.PriceFilter.More">
+            <summary>
+            If <b>More = null</b>, then filtering won't work 
+            </summary>
+        </member>
+        <member name="P:Shop.Models.PriceFilter.Less">
+            <summary>
+            If <b>Less = null</b>, then filtering won't work 
+            </summary>
+        </member>
+        <member name="P:Shop.Models.SortAndFilter.Count">
+            <summary>
+            The count you need to withdraw<br></br>
+            If <b>Count &lt; 0</b>, then outputs <b>all</b> products
+            </summary>
+        </member>
+        <member name="P:Shop.Models.SortAndFilter.Page">
+            <summary>
+            Which page to display
+            </summary>
+        </member>
+        <member name="P:Shop.Models.SortAndFilter.Type">
+            <summary>
+            The type of product that is stored on the database is <b>not case-sensitive</b><br></br>
+            If <b>Type = null</b>, then filtering won't work 
+            </summary>
+        </member>
+        <member name="P:Shop.Models.SortAndFilter.PriceFilter">
+            <summary>
+            If <b>PriceFilter = null</b>, then filtering won't work 
+            </summary>
+        </member>
+        <member name="P:Shop.Models.SortAndFilter.Sort">
+            <summary>
+            If <b>Sort = null</b>, then sorting won't work 
+            </summary>
+        </member>
+        <member name="P:Shop.Models.SortAndFilter.Warranty">
+            <summary>
+            <b>null</b>  - filtering won't work<br></br>
+            <b>true</b>  - the products is issued that has a warranty<br></br>
+            <b>false</b> - the products is issued for which <b>no</b> warranty
+            </summary>
+        </member>
+        <member name="P:Shop.Models.SortAndFilter.IsStock">
+            <summary>
+            <b>null</b>  - filtering won't work<br></br>
+            <b>true</b>  - the products that are in stock are issued<br></br>
+            <b>false</b> - the products that is <b>not</b> in stock is issued
+            </summary>
+        </member>
+        <member name="P:Shop.Models.SortModel.Sort_Asc">
+            <summary>
+            Default value - <b>true</b><br></br>
+            <b>Sort_Asc = true</b>, sorting by ascending<br></br>
+            <b>Sort_Asc = false</b>, sorting by descending
+            </summary>
+        </member>
+        <member name="P:Shop.Models.SortModel.Type">
+            <summary>
+            Sorting by Type, the type is <b>not case-sensitive</b><br></br>
+            <b>"popularity"</b> - sort by popularity<br></br>
+            <b>"price"</b> - sort by price
+            </summary>
+        </member>
+    </members>
+</doc>
