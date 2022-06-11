@@ -4,34 +4,6 @@
         <name>Shop</name>
     </assembly>
     <members>
-        <member name="T:Shop.Controllers.DataBaseController">
-            <summary>
-            Not to use, was created as debugging
-            </summary>
-        </member>
-        <member name="M:Shop.Controllers.DataBaseController.AddProduct(Shop.Models.Product)">
-            <summary>
-            Creates new products
-            </summary>
-            <param name="product">Product</param>
-            <returns>Rerturns ActionResult</returns>
-            <response code="200">Success</response>
-        </member>
-        <member name="M:Shop.Controllers.DataBaseController.AddRangeProduct(Shop.Models.Product[])">
-            <summary>
-            Creates multiple products
-            </summary>
-            <param name="products"></param>
-            <returns>Returns ActionResult</returns>
-            <response code="200">Success</response>
-        </member>
-        <member name="M:Shop.Controllers.DataBaseController.ChangeProduct(Shop.Models.Product)">
-            <summary>
-            Updates product
-            </summary>
-            <param name="product">Product</param>
-            <response code="200">Success</response>
-        </member>
         <member name="M:Shop.Controllers.ProductController.GetProductView(System.Int32)">
             <summary>
             Get product
