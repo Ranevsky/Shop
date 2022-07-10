@@ -4,10 +4,11 @@ using Shop.Models.View;
 
 namespace Shop.Models;
 
-public sealed class AutoMapping : Profile
+public sealed class ProductProfile : Profile
 {
-    public AutoMapping()
+    public ProductProfile()
     {
+        // Product
         CreateMap<Product, ProductView>()
             .ForMember(p => p.ProductType, opt =>
             {
@@ -39,12 +40,38 @@ public sealed class AutoMapping : Profile
                  opt.MapFrom(p => p.Type.Name);
              });
 
-
-
         CreateMap<Image, ImageView>()
             .ForMember(i => i.Url, opt =>
             {
                 opt.MapFrom(i => Convert.ImageToString(i));
+            });
+
+
+        // ProductAddModel
+        CreateMap<ProductAddModel, Product>();
+
+        CreateMap<string, ProductType>()
+            .ForMember(p => p.Name, opt =>
+            {
+                opt.MapFrom(s => s);
+            });
+        
+        CreateMap<string, Description>()
+            .ForMember(d => d.Text, opt =>
+            {
+                opt.MapFrom(s => s);
+            });
+
+        CreateMap<string, Characteristic>()
+            .ForMember(c => c.Description, opt =>
+            {
+                opt.MapFrom(s => s);
+            });
+
+        CreateMap<string, Warranty>()
+            .ForMember(w => w.Description, opt =>
+            {
+                opt.MapFrom(s => s);
             });
     }
     internal static class Convert
@@ -58,7 +85,7 @@ public sealed class AutoMapping : Profile
         }
         internal static string ImageToString(Image image)
         {
-            return $"{Program.applicationUrl}{Program.ImageUrl}/{image.Name}";
+            return $"{Program.ApplicationUrl}{Program.ImageUrl}/{image.Name}";
 
         }
 

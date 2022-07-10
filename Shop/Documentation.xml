@@ -4,7 +4,7 @@
         <name>Shop</name>
     </assembly>
     <members>
-        <member name="M:Shop.Controllers.ProductController.GetProductView(System.Int32)">
+        <member name="M:Shop.Controllers.ProductController.GetProductViewAsync(System.Int32)">
             <summary>
             Get product
             </summary>

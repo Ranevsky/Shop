@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 using Microsoft.Extensions.FileProviders;
 
 using Shop.Extensions;
+using Shop.Models;
 
 
 namespace Shop;
@@ -12,7 +13,7 @@ internal sealed class Program
     public static IConfiguration Configuration = null!;
     public static string PathToImages = null!;
     public const string ImageUrl = "/image";
-    public static string applicationUrl = null!;
+    public static string ApplicationUrl = null!;
     private static void GetApplicationUrl()
     {
         string path = $"{Directory.GetCurrentDirectory()}/Properties/launchSettings.json";
@@ -27,7 +28,7 @@ internal sealed class Program
         string? applicationUr = js["profiles"]?["Shop"]?["applicationUrl"]?.ToString().Split(';')[0]
             ?? throw new Exception("file 'launchSettings.json' configured incorrectly, path not found (profiles -> Shop -> applicationUrl)");
 
-        applicationUrl = applicationUr;
+        ApplicationUrl = applicationUr;
     }
     private static void GetPathToImages()
     {
@@ -63,7 +64,7 @@ internal sealed class Program
             {
                 opt.IncludeXmlComments(GetXmlCommentsPath());
             })
-            .AddAutoMapper(typeof(Program))
+            .AddAutoMapper(typeof(ProductProfile))
             .AddUnitOfWork()
             .AddEndpointsApiExplorer()
             .AddApplicationContext()

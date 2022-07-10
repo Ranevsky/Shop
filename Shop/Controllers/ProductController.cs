@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Shop.Models;
 using Shop.Models.Repository;
 using Shop.Models.View;
+using Shop.Extensions;
 
 namespace Shop.Controllers;
 
@@ -12,12 +13,12 @@ namespace Shop.Controllers;
 [Route("[controller]")]
 public sealed class ProductController : ControllerBase
 {
-    private readonly IUnitOfWork uow;
-    private readonly IMapper mapper;
+    private readonly IUnitOfWork _uow;
+    private readonly IMapper _mapper;
     public ProductController(IUnitOfWork uow, IMapper mapper)
     {
-        this.uow = uow;
-        this.mapper = mapper;
+        this._uow = uow;
+        this._mapper = mapper;
     }
 
     /// <summary>
@@ -29,17 +30,17 @@ public sealed class ProductController : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ProductView), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ProductView>> GetProductView(int id)
+    public async Task<ActionResult<ProductView>> GetProductViewAsync(int id)
     {
-        Product? product = await uow.Products.FindAsync(id);
+        Product? product = await _uow.Products.FindAsync(id);
         if (product == null)
         {
             return NotFound();
         }
         product.Popularity++;
-        await uow.SaveAsync();
+        await _uow.SaveAsync();
 
-        ProductView? viewProduct = mapper.Map<ProductView>(product);
+        ProductView? viewProduct = _mapper.Map<ProductView>(product);
         return Ok(viewProduct);
     }
 
@@ -58,7 +59,7 @@ public sealed class ProductController : ControllerBase
         IQueryable<Product> productsQuery;
         try
         {
-            productsQuery = uow.Products.Paging(model).Result;
+            productsQuery = _uow.Products.Paging(model).Result;
         }
         catch (Exception ex)
         {
@@ -68,10 +69,30 @@ public sealed class ProductController : ControllerBase
         CatalogView? catalog = new() { CountProducts = productsQuery.LongCount() };
 
         productsQuery = productsQuery.Skip((model.Page - 1) * model.Count).Take(model.Count);
-        ProductInCatalogView[]? productCatalog = mapper.Map<ProductInCatalogView[]>(productsQuery.ToArray());
+        ProductInCatalogView[]? productCatalog = _mapper.Map<ProductInCatalogView[]>(productsQuery.ToArray());
 
         catalog.Products = productCatalog;
 
         return Ok(catalog);
     }
+
+    [HttpPut]
+    public async Task<ActionResult> AddProductAsync(ProductAddModel productModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            return Content("Model is not valid");
+        }
+
+        Product product = _mapper.Map<Product>(productModel);
+
+        await _uow.Products.AddAsync(product);
+        await _uow.SaveAsync();
+
+        ProductView productView = _mapper.Map<ProductView>(product);
+        return base.CreatedAtAction("GetProductView", new { Id = product.Id }, productView);
+    }
+
+    [HttpPut]
+    public ActionResult AddImage(IEnumerable<Image>) // Система картинок
 }
