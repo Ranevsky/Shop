@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Shop.Models;
 using Shop.Models.Repository;
 using Shop.Models.View;
-using Shop.Extensions;
 
 namespace Shop.Controllers;
 
@@ -69,7 +68,8 @@ public sealed class ProductController : ControllerBase
         CatalogView? catalog = new() { CountProducts = productsQuery.LongCount() };
 
         productsQuery = productsQuery.Skip((model.Page - 1) * model.Count).Take(model.Count);
-        ProductInCatalogView[]? productCatalog = _mapper.Map<ProductInCatalogView[]>(productsQuery.ToArray());
+        var a = productsQuery.ToArray();
+        ProductInCatalogView[]? productCatalog = _mapper.Map<ProductInCatalogView[]>(a);
 
         catalog.Products = productCatalog;
 
@@ -90,9 +90,7 @@ public sealed class ProductController : ControllerBase
         await _uow.SaveAsync();
 
         ProductView productView = _mapper.Map<ProductView>(product);
-        return base.CreatedAtAction("GetProductView", new { Id = product.Id }, productView);
+        return base.CreatedAtAction("GetProductView", new { id = product.Id }, productView);
     }
 
-    [HttpPut]
-    public ActionResult AddImage(IEnumerable<Image>) // Система картинок
 }

@@ -22,9 +22,10 @@ public sealed class Product
             if (!Images[i].IsExist())
             {
                 Console.WriteLine($"Remove image id '{Images[i].Id}'");
-                Images.Remove(Images[i]);
+#warning Image removing disabled             
+                //Images.Remove(Images[i]);
                 isChange = true;
-                i--;
+                //i--;
             }
         }
 

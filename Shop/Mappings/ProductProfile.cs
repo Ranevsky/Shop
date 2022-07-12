@@ -30,20 +30,24 @@ public sealed class ProductProfile : Profile
         CreateMap<Characteristic, string>()
             .ConvertUsing(p => p.Description);
 
+
         CreateMap<Product, ProductInCatalogView>()
-            .ForMember(p => p.Image, opt =>
-            {
-                opt.MapFrom(p => Convert.FirstImageToString(p.Images));
-            })
-            .ForMember(p => p.ProductType, opt =>
+            .ForMember(productView => productView.ProductType, opt =>
              {
-                 opt.MapFrom(p => p.Type.Name);
-             });
+                 opt.MapFrom(product => product.Type.Name);
+             })
+            .ForMember(ProductView => ProductView.Image, opt =>
+            {
+                opt.MapFrom(product => product.Images.FirstOrDefault());
+            });
+
+        CreateMap<Image, string>()
+            .ConvertUsing(i => i.GetUrl());
 
         CreateMap<Image, ImageView>()
             .ForMember(i => i.Url, opt =>
             {
-                opt.MapFrom(i => Convert.ImageToString(i));
+                opt.MapFrom(i => i.GetUrl());
             });
 
 
@@ -73,21 +77,5 @@ public sealed class ProductProfile : Profile
             {
                 opt.MapFrom(s => s);
             });
-    }
-    internal static class Convert
-    {
-        internal static string? FirstImageToString(IEnumerable<Image> images)
-        {
-            Image? image = images.FirstOrDefault();
-
-            return image == null ? null : ImageToString(image);
-
-        }
-        internal static string ImageToString(Image image)
-        {
-            return $"{Program.ApplicationUrl}{Program.ImageUrl}/{image.Name}";
-
-        }
-
     }
 }

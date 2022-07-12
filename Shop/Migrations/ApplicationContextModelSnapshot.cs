@@ -34,7 +34,7 @@ namespace Shop.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Characteristics");
+                    b.ToTable("Characteristics", (string)null);
                 });
 
             modelBuilder.Entity("Shop.Models.Description", b =>
@@ -49,7 +49,7 @@ namespace Shop.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Descriptions");
+                    b.ToTable("Descriptions", (string)null);
                 });
 
             modelBuilder.Entity("Shop.Models.Image", b =>
@@ -69,7 +69,7 @@ namespace Shop.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Images");
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("Shop.Models.Product", b =>
@@ -108,7 +108,7 @@ namespace Shop.Migrations
 
                     b.HasIndex("WarrantyId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Shop.Models.ProductType", b =>
@@ -123,7 +123,7 @@ namespace Shop.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductTypes");
+                    b.ToTable("ProductTypes", (string)null);
                 });
 
             modelBuilder.Entity("Shop.Models.Warranty", b =>
@@ -138,7 +138,7 @@ namespace Shop.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Warranties");
+                    b.ToTable("Warranties", (string)null);
                 });
 
             modelBuilder.Entity("Shop.Models.Characteristic", b =>

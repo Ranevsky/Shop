@@ -1,6 +1,5 @@
 ﻿namespace Shop.Models;
 
-#warning Set automapper
 public class ProductAddModel
 {
     public string Name { get; set; } = null!;

@@ -12,6 +12,10 @@ public sealed class Image
     public bool IsExist()
     {
         // File path
-        return File.Exists($"{Program.PathToImages}/{Name}");
+        return File.Exists($"{Program.PathToImages}{Program.ProductDirectory}/{Name}");
+    }
+    public string GetUrl()
+    {
+        return $"{Program.ApplicationUrl}{Program.ImageUrl}{Program.ProductDirectory}/{Name}";
     }
 }

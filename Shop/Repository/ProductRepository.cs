@@ -33,11 +33,11 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
         #region Filters
         if (model.Type != null)
         {
-            if (await db.ProductTypes.FirstOrDefaultAsync(p => p.Name.ToLower() == model.Type.ToLower()) == null)
+            if (await db.ProductTypes.FirstOrDefaultAsync(p => string.Equals(p.Name, model.Type, StringComparison.InvariantCultureIgnoreCase)) == null)
             {
                 throw new Exception("Product type is not found");
             }
-            productsQury = productsQury.Where(p => p.Type.Name.ToLower() == model.Type.ToLower());
+            productsQury = productsQury.Where(p => string.Equals(p.Type.Name, model.Type, StringComparison.InvariantCultureIgnoreCase));
         }
 
         if (model.PriceFilter != null)
@@ -92,9 +92,9 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
                 }
             }
 
-            productsQury = model.Sort.Sort_Asc == true ?
-                productsQury.OrderBy(expression) :
-                productsQury.OrderByDescending(expression);
+            productsQury = model.Sort.Sort_Asc == true 
+                ? productsQury.OrderBy(expression) 
+                : productsQury.OrderByDescending(expression);
         }
         #endregion
 
@@ -115,7 +115,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
     {
         return db.Products
             .Include(p => p.Type)
-            .Include(p => p.Images);
+            .Include(p => p.Images.Take(1));
     }
     private async Task CheckingImageExists(params Product[] products)
     {

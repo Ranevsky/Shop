@@ -13,6 +13,8 @@ internal sealed class Program
     public static IConfiguration Configuration = null!;
     public static string PathToImages = null!;
     public const string ImageUrl = "/image";
+    public const string ImageDirectory = "/images";
+    public const string ProductDirectory = "/products";
     public static string ApplicationUrl = null!;
     private static void GetApplicationUrl()
     {
@@ -30,20 +32,14 @@ internal sealed class Program
 
         ApplicationUrl = applicationUr;
     }
-    private static void GetPathToImages()
+    private static void GetPathToImages(string webRootPath)
     {
-        string pathToImages = Configuration.GetValue<string>("PathToImages");
-        if (string.IsNullOrEmpty(pathToImages))
-        {
-            throw new Exception("Enter in 'appsetings.json' path to images");
-        }
-        PathToImages = Directory.GetCurrentDirectory() + pathToImages;
+        PathToImages = $"{webRootPath}{ImageDirectory}";
         if (!Directory.Exists(PathToImages))
         {
             // If the folder is not created and suddenly it is expected that there will be files
             throw new Exception($"Not exist '{PathToImages}', please create directory");
         }
-
     }
     private static string GetXmlCommentsPath()
     {
@@ -53,10 +49,11 @@ internal sealed class Program
     private static void Main(string[] args)
     {
         WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
+ 
         Configuration = builder.Configuration;
-        GetPathToImages();
+        GetPathToImages(builder.Environment.WebRootPath);
         GetApplicationUrl();
-
+        //return;
         // Services
 
         builder.Services.AddCors()
