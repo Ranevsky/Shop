@@ -46,19 +46,20 @@ public sealed class ProductController : ControllerBase
     /// <summary>
     /// Gets products after sorting and filtering
     /// </summary>
-    /// <param name="model">Sorting and filter model</param>
+    /// <param name="sortAndFilter">Sorting and filter model</param>
+    /// <param name="paging">Model with pages and quantity of products</param>
     /// <returns>Returns CatalogView</returns>
     /// <response code="200">Success</response>
     /// <response code="400">Bad Request</response>
     [HttpGet("Paging")]
     [ProducesResponseType(typeof(CatalogView),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    public ActionResult<CatalogView> Paging([FromQuery] SortAndFilter model)
+    public ActionResult<CatalogView> Paging([FromQuery] SortAndFilter sortAndFilter, [FromQuery] PagingModel paging)
     {
         IQueryable<Product> productsQuery;
         try
         {
-            productsQuery = _uow.Products.Paging(model).Result;
+            productsQuery = _uow.Products.Paging(sortAndFilter).Result;
         }
         catch (Exception ex)
         {
@@ -67,10 +68,10 @@ public sealed class ProductController : ControllerBase
 
         CatalogView? catalog = new() { CountProducts = productsQuery.LongCount() };
 
-        productsQuery = productsQuery.Skip((model.Page - 1) * model.Count).Take(model.Count);
-        var a = productsQuery.ToArray();
-        ProductInCatalogView[]? productCatalog = _mapper.Map<ProductInCatalogView[]>(a);
+        productsQuery = Paging(productsQuery, paging);
 
+        Product[] products = productsQuery.ToArray();
+        ProductInCatalogView[] productCatalog = _mapper.Map<ProductInCatalogView[]>(products);
         catalog.Products = productCatalog;
 
         return Ok(catalog);
@@ -91,6 +92,12 @@ public sealed class ProductController : ControllerBase
 
         ProductView productView = _mapper.Map<ProductView>(product);
         return base.CreatedAtAction("GetProductView", new { id = product.Id }, productView);
+    }
+
+    [NonAction]
+    private static IQueryable<T> Paging<T>(IQueryable<T> query, PagingModel paging)
+    {
+        return query.Skip((paging.Page - 1) * paging.Count).Take(paging.Count);
     }
 
 }

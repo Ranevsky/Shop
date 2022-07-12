@@ -12,78 +12,88 @@
             <returns>Returns ProductView</returns>
             <response code="200">Success</response>
         </member>
-        <member name="M:Shop.Controllers.ProductController.Paging(Shop.Models.SortAndFilter)">
+        <member name="M:Shop.Controllers.ProductController.Paging(Shop.Models.SortAndFilter,Shop.Models.PagingModel)">
             <summary>
             Gets products after sorting and filtering
             </summary>
-            <param name="model">Sorting and filter model</param>
+            <param name="sortAndFilter">Sorting and filter model</param>
+            <param name="paging">Model with pages and quantity of products</param>
             <returns>Returns CatalogView</returns>
             <response code="200">Success</response>
             <response code="400">Bad Request</response>
         </member>
+        <member name="P:Shop.Models.PagingModel.Count">
+            <summary>
+            The count you need to withdraw<br></br>
+            If <b>Count &lt; 0</b>, then outputs <b>all</b> products<br></br>
+            Default: <b>1</b>
+            </summary>
+        </member>
+        <member name="P:Shop.Models.PagingModel.Page">
+            <summary>
+            Which page to display<br></br>
+            Default: <b>1</b>
+            </summary>
+        </member>
         <member name="P:Shop.Models.PriceFilter.More">
             <summary>
-            If <b>More = null</b>, then filtering won't work 
+            If <b>More = null</b>, then filtering won't work<br></br>
+            Default: <b>null</b>
             </summary>
         </member>
         <member name="P:Shop.Models.PriceFilter.Less">
             <summary>
-            If <b>Less = null</b>, then filtering won't work 
-            </summary>
-        </member>
-        <member name="P:Shop.Models.SortAndFilter.Count">
-            <summary>
-            The count you need to withdraw<br></br>
-            If <b>Count &lt; 0</b>, then outputs <b>all</b> products
-            </summary>
-        </member>
-        <member name="P:Shop.Models.SortAndFilter.Page">
-            <summary>
-            Which page to display
+            If <b>Less = null</b>, then filtering won't work<br></br>
+            Default: <b>null</b>
             </summary>
         </member>
         <member name="P:Shop.Models.SortAndFilter.Type">
             <summary>
             The type of product that is stored on the database is <b>not case-sensitive</b><br></br>
-            If <b>Type = null</b>, then filtering won't work 
+            If <b>Type = null</b>, then filtering won't work<br></br>
+            Default: <b>null</b>
             </summary>
         </member>
         <member name="P:Shop.Models.SortAndFilter.PriceFilter">
             <summary>
-            If <b>PriceFilter = null</b>, then filtering won't work 
+            If <b>PriceFilter = null</b>, then filtering won't work<br></br>
+            Default: <b>null</b>
             </summary>
         </member>
         <member name="P:Shop.Models.SortAndFilter.Sort">
             <summary>
-            If <b>Sort = null</b>, then sorting won't work 
+            If <b>Sort = null</b>, then sorting won't work<br></br>
+            Default: <b>null</b>
             </summary>
         </member>
         <member name="P:Shop.Models.SortAndFilter.Warranty">
             <summary>
-            <b>null</b>  - filtering won't work<br></br>
             <b>true</b>  - the products is issued that has a warranty<br></br>
             <b>false</b> - the products is issued for which <b>no</b> warranty
+            <b>null</b>  - filtering won't work<br></br>
+            Default: <b>null</b>
             </summary>
         </member>
         <member name="P:Shop.Models.SortAndFilter.IsStock">
             <summary>
-            <b>null</b>  - filtering won't work<br></br>
             <b>true</b>  - the products that are in stock are issued<br></br>
             <b>false</b> - the products that is <b>not</b> in stock is issued
+            <b>null</b>  - filtering won't work<br></br>
+            Default: <b>null</b>
             </summary>
         </member>
-        <member name="P:Shop.Models.SortModel.Sort_Asc">
+        <member name="P:Shop.Models.SortModel.SortAsc">
             <summary>
-            Default value - <b>true</b><br></br>
-            <b>Sort_Asc = true</b>, sorting by ascending<br></br>
-            <b>Sort_Asc = false</b>, sorting by descending
+            <b>SortAsc = true</b>, sorting by ascending<br></br>
+            <b>SortAsc = false</b>, sorting by descending<br></br>
+            Default: <b>true</b>
             </summary>
         </member>
         <member name="P:Shop.Models.SortModel.Type">
             <summary>
-            Sorting by Type, the type is <b>not case-sensitive</b><br></br>
-            <b>"popularity"</b> - sort by popularity<br></br>
-            <b>"price"</b> - sort by price
+            <b>0</b> - Popularity<br></br>
+            <b>1</b> - Price<br></br>
+            Default: <b>0</b>
             </summary>
         </member>
     </members>

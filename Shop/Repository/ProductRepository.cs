@@ -29,15 +29,16 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
     public async Task<IQueryable<Product>> Paging(SortAndFilter model)
     {
         IQueryable<Product>? productsQury = GetCatalogInclusions();
-
         #region Filters
         if (model.Type != null)
         {
-            if (await db.ProductTypes.FirstOrDefaultAsync(p => string.Equals(p.Name, model.Type, StringComparison.InvariantCultureIgnoreCase)) == null)
+            ProductType? type = await db.ProductTypes.FirstOrDefaultAsync(p => p.Name.ToUpper() == model.Type.ToUpper());
+
+            if (type == null)
             {
                 throw new Exception("Product type is not found");
             }
-            productsQury = productsQury.Where(p => string.Equals(p.Type.Name, model.Type, StringComparison.InvariantCultureIgnoreCase));
+            productsQury = productsQury.Where(p => p.Type.Name == type.Name);
         }
 
         if (model.PriceFilter != null)
@@ -71,16 +72,15 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
         {
             Expression<Func<Product, double>> expression;
 
-            string sortType = model.Sort.Type.ToLower();
-            switch (sortType)
+            switch (model.Sort.Type)
             {
-                case "popularity":
+                case SortModel.TypeSort.Popularity:
                 {
                     expression = p => p.Popularity;
                     break;
                 }
 
-                case "price":
+                case SortModel.TypeSort.Price:
                 {
                     expression = p => (double)p.Price;
                     break;
@@ -92,7 +92,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
                 }
             }
 
-            productsQury = model.Sort.Sort_Asc == true 
+            productsQury = model.Sort.SortAsc == true 
                 ? productsQury.OrderBy(expression) 
                 : productsQury.OrderByDescending(expression);
         }
