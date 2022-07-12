@@ -1,4 +1,7 @@
-﻿namespace Shop.Models.Repository;
+﻿using Shop.Models.Catalog;
+using Shop.Models.Product;
+
+namespace Shop.Repositories.Interfaces;
 
 public interface IProductRepository : IRepository<Product>
 {

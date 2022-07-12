@@ -1,4 +1,4 @@
-﻿namespace Shop.Models;
+﻿namespace Shop.Models.Catalog;
 
 public sealed class SortAndFilter
 {

@@ -1,4 +1,7 @@
-﻿namespace Shop.Models.Repository;
+﻿using Shop.Context;
+using Shop.Repositories.Interfaces;
+
+namespace Shop.Repositories;
 
 public class Repository<T> : IRepository<T> where T : class
 {

@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Shop.Models;
+using Shop.Models.Product;
+
+namespace Shop.Context;
 
 public sealed class ApplicationContext : DbContext
 {

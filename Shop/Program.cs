@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 using Microsoft.Extensions.FileProviders;
 
 using Shop.Extensions;
-using Shop.Models;
+using Shop.Profiles;
 
 
 namespace Shop;
@@ -49,7 +49,7 @@ internal sealed class Program
     private static void Main(string[] args)
     {
         WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
- 
+
         Configuration = builder.Configuration;
         GetPathToImages(builder.Environment.WebRootPath);
         GetApplicationUrl();

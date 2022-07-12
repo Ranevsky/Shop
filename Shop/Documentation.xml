@@ -12,7 +12,7 @@
             <returns>Returns ProductView</returns>
             <response code="200">Success</response>
         </member>
-        <member name="M:Shop.Controllers.ProductController.Paging(Shop.Models.SortAndFilter,Shop.Models.PagingModel)">
+        <member name="M:Shop.Controllers.ProductController.Paging(Shop.Models.Catalog.SortAndFilter,Shop.Models.Catalog.PagingModel)">
             <summary>
             Gets products after sorting and filtering
             </summary>
@@ -22,51 +22,51 @@
             <response code="200">Success</response>
             <response code="400">Bad Request</response>
         </member>
-        <member name="P:Shop.Models.PagingModel.Count">
+        <member name="P:Shop.Models.Catalog.PagingModel.Count">
             <summary>
             The count you need to withdraw<br></br>
             If <b>Count &lt; 0</b>, then outputs <b>all</b> products<br></br>
             Default: <b>1</b>
             </summary>
         </member>
-        <member name="P:Shop.Models.PagingModel.Page">
+        <member name="P:Shop.Models.Catalog.PagingModel.Page">
             <summary>
             Which page to display<br></br>
             Default: <b>1</b>
             </summary>
         </member>
-        <member name="P:Shop.Models.PriceFilter.More">
+        <member name="P:Shop.Models.Catalog.PriceFilter.More">
             <summary>
             If <b>More = null</b>, then filtering won't work<br></br>
             Default: <b>null</b>
             </summary>
         </member>
-        <member name="P:Shop.Models.PriceFilter.Less">
+        <member name="P:Shop.Models.Catalog.PriceFilter.Less">
             <summary>
             If <b>Less = null</b>, then filtering won't work<br></br>
             Default: <b>null</b>
             </summary>
         </member>
-        <member name="P:Shop.Models.SortAndFilter.Type">
+        <member name="P:Shop.Models.Catalog.SortAndFilter.Type">
             <summary>
             The type of product that is stored on the database is <b>not case-sensitive</b><br></br>
             If <b>Type = null</b>, then filtering won't work<br></br>
             Default: <b>null</b>
             </summary>
         </member>
-        <member name="P:Shop.Models.SortAndFilter.PriceFilter">
+        <member name="P:Shop.Models.Catalog.SortAndFilter.PriceFilter">
             <summary>
             If <b>PriceFilter = null</b>, then filtering won't work<br></br>
             Default: <b>null</b>
             </summary>
         </member>
-        <member name="P:Shop.Models.SortAndFilter.Sort">
+        <member name="P:Shop.Models.Catalog.SortAndFilter.Sort">
             <summary>
             If <b>Sort = null</b>, then sorting won't work<br></br>
             Default: <b>null</b>
             </summary>
         </member>
-        <member name="P:Shop.Models.SortAndFilter.Warranty">
+        <member name="P:Shop.Models.Catalog.SortAndFilter.Warranty">
             <summary>
             <b>true</b>  - the products is issued that has a warranty<br></br>
             <b>false</b> - the products is issued for which <b>no</b> warranty
@@ -74,7 +74,7 @@
             Default: <b>null</b>
             </summary>
         </member>
-        <member name="P:Shop.Models.SortAndFilter.IsStock">
+        <member name="P:Shop.Models.Catalog.SortAndFilter.IsStock">
             <summary>
             <b>true</b>  - the products that are in stock are issued<br></br>
             <b>false</b> - the products that is <b>not</b> in stock is issued
@@ -82,14 +82,14 @@
             Default: <b>null</b>
             </summary>
         </member>
-        <member name="P:Shop.Models.SortModel.SortAsc">
+        <member name="P:Shop.Models.Catalog.SortModel.SortAsc">
             <summary>
             <b>SortAsc = true</b>, sorting by ascending<br></br>
             <b>SortAsc = false</b>, sorting by descending<br></br>
             Default: <b>true</b>
             </summary>
         </member>
-        <member name="P:Shop.Models.SortModel.Type">
+        <member name="P:Shop.Models.Catalog.SortModel.Type">
             <summary>
             <b>0</b> - Popularity<br></br>
             <b>1</b> - Price<br></br>

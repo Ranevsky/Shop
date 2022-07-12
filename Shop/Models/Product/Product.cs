@@ -1,4 +1,4 @@
-﻿namespace Shop.Models;
+﻿namespace Shop.Models.Product;
 
 public sealed class Product
 {
@@ -22,7 +22,7 @@ public sealed class Product
             if (!Images[i].IsExist())
             {
                 Console.WriteLine($"Remove image id '{Images[i].Id}'");
-#warning Image removing disabled             
+#warning Image removing disabled
                 //Images.Remove(Images[i]);
                 isChange = true;
                 //i--;

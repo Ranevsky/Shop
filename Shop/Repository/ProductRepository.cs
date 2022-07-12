@@ -2,7 +2,12 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Shop.Models.Repository;
+using Shop.Context;
+using Shop.Models.Catalog;
+using Shop.Models.Product;
+using Shop.Repositories.Interfaces;
+
+namespace Shop.Repositories;
 
 public sealed class ProductRepository : Repository<Product>, IProductRepository
 {
@@ -92,8 +97,8 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
                 }
             }
 
-            productsQury = model.Sort.SortAsc == true 
-                ? productsQury.OrderBy(expression) 
+            productsQury = model.Sort.SortAsc == true
+                ? productsQury.OrderBy(expression)
                 : productsQury.OrderByDescending(expression);
         }
         #endregion

@@ -6,6 +6,7 @@
 # Ignore Todo
 TODO.txt
 Shop/Controllers/Test.cs
+Shop/Migrations/*
 
 # User-specific files
 *.rsuser

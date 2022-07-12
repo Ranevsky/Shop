@@ -2,9 +2,9 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-using Shop.Models;
-using Shop.Models.Repository;
-using Shop.Models.View;
+using Shop.Models.Catalog;
+using Shop.Models.Product;
+using Shop.Repositories.Interfaces;
 
 namespace Shop.Controllers;
 
@@ -16,8 +16,8 @@ public sealed class ProductController : ControllerBase
     private readonly IMapper _mapper;
     public ProductController(IUnitOfWork uow, IMapper mapper)
     {
-        this._uow = uow;
-        this._mapper = mapper;
+        _uow = uow;
+        _mapper = mapper;
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ public sealed class ProductController : ControllerBase
     /// <response code="200">Success</response>
     /// <response code="400">Bad Request</response>
     [HttpGet("Paging")]
-    [ProducesResponseType(typeof(CatalogView),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CatalogView), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public ActionResult<CatalogView> Paging([FromQuery] SortAndFilter sortAndFilter, [FromQuery] PagingModel paging)
     {

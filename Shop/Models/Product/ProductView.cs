@@ -1,4 +1,4 @@
-﻿namespace Shop.Models.View;
+﻿namespace Shop.Models.Product;
 
 public sealed class ProductView
 {

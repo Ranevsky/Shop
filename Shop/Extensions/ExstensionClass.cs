@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-using Shop.Models;
-using Shop.Models.Repository;
+using Shop.Context;
+using Shop.Repositories;
+using Shop.Repositories.Interfaces;
 
 namespace Shop.Extensions;
 

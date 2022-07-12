@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 
-using Shop.Models.View;
+using Shop.Models.Catalog;
+using Shop.Models.Product;
 
-namespace Shop.Models;
+namespace Shop.Profiles;
 
 public sealed class ProductProfile : Profile
 {
@@ -52,7 +53,7 @@ public sealed class ProductProfile : Profile
             {
                 opt.MapFrom(s => s);
             });
-        
+
         CreateMap<string, Description>()
             .ForMember(d => d.Text, opt =>
             {

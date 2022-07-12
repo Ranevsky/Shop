@@ -1,4 +1,4 @@
-﻿namespace Shop.Models.Repository;
+﻿namespace Shop.Repositories.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {

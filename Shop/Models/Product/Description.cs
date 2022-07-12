@@ -1,4 +1,4 @@
-﻿namespace Shop.Models;
+﻿namespace Shop.Models.Product;
 
 public sealed class Description
 {
