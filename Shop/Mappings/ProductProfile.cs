@@ -44,13 +44,6 @@ public sealed class ProductProfile : Profile
         CreateMap<Image, string>()
             .ConvertUsing(i => i.GetUrl());
 
-        CreateMap<Image, ImageView>()
-            .ForMember(i => i.Url, opt =>
-            {
-                opt.MapFrom(i => i.GetUrl());
-            });
-
-
         // ProductAddModel
         CreateMap<ProductAddModel, Product>();
 
