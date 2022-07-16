@@ -18,6 +18,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
 
     public override async Task<Product?> FindAsync(int id)
     {
+#warning Watching product != null exception system
         IQueryable<Product>? products = GetAllInclusions();
         Product? product = await products.FirstOrDefaultAsync(i => i.Id == id);
         if (product != null)
@@ -37,7 +38,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
         #region Filters
         if (model.Type != null)
         {
-            ProductType? type = await db.ProductTypes.FirstOrDefaultAsync(p => p.Name.ToUpper() == model.Type.ToUpper());
+            ProductType? type = await Db.ProductTypes.FirstOrDefaultAsync(p => p.Name.ToUpper() == model.Type.ToUpper());
 
             if (type == null)
             {
@@ -108,7 +109,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
 
     private IQueryable<Product> GetAllInclusions()
     {
-        return db.Products
+        return Db.Products
             //.AsSplitQuery() // If there is a very large duplicate database
             .Include(p => p.Description)
             .Include(p => p.Characteristics)
@@ -118,7 +119,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
     }
     private IQueryable<Product> GetCatalogInclusions()
     {
-        return db.Products
+        return Db.Products
             .Include(p => p.Type)
             .Include(p => p.Images.Take(1));
     }
@@ -134,7 +135,79 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
         }
         if (isChange)
         {
-            await db.SaveChangesAsync();
+            await Db.SaveChangesAsync();
+        }
+    }
+
+
+    public async Task Delete(int id)
+    {
+        Product? product = await FindAsync(id);
+
+        if (product == null)
+        {
+            return;
+        }
+
+        product.Delete();
+        Db.Remove(product);
+        await Db.SaveChangesAsync();
+    }
+
+
+    public async Task AddImages(int id, IFormFileCollection uploadedFiles, IImageRepository imageRepository)
+    {
+        Product? product = await Db.Products.Include(p => p.Images).FirstOrDefaultAsync(p => p.Id == id);
+
+        if (product == null)
+        {
+            throw new Exception("Product not found");
+        }
+
+        IEnumerable<Image> images = await imageRepository.CreateImages(uploadedFiles, $"{Program.ProductDirectory}/{product.Id}");
+
+        product.Images.AddRange(images);
+        await Db.SaveChangesAsync();
+    }
+    public async Task DeleteImages(int productId, params int[] imagesId)
+    {
+        Product? product = await Db.Products.Include(p => p.Images).FirstOrDefaultAsync(p => p.Id == productId);
+
+        if (product == null)
+        {
+            throw new Exception("Product not found");
+        }
+
+        Dictionary<int, Image> dictionary = new(
+            product.Images.Select(i => new KeyValuePair<int, Image>(i.Id, i)));
+
+        if (!Checking(dictionary, imagesId))
+        {
+            throw new Exception("Not exist");
+        }
+
+        Delete(product, imagesId);
+
+        await Db.SaveChangesAsync();
+
+        bool Checking(Dictionary<int, Image> dictionary, params int[] imagesId)
+        {
+            foreach (int id in imagesId)
+            {
+                if (!dictionary.ContainsKey(id))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        void Delete(Product product, params int[] imagesId)
+        {
+            foreach (int id in imagesId)
+            {
+                product.DeleteImage(dictionary[id]);
+            }
         }
     }
 }
+

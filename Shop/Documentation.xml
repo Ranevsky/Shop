@@ -96,5 +96,25 @@
             Default: <b>0</b>
             </summary>
         </member>
+        <member name="P:Shop.Models.Product.Image.Name">
+            <summary>
+            Example: foo.png
+            </summary>
+        </member>
+        <member name="P:Shop.Models.Product.Image.Path">
+            <summary>
+            Example: products/2
+            </summary>
+        </member>
+        <member name="P:Shop.Program.PathToImages">
+            <summary>
+            Example: C:/.../wwwroot/images
+            </summary>
+        </member>
+        <member name="P:Shop.Program.ApplicationUrl">
+            <summary>
+            Example: https://localhost:7287
+            </summary>
+        </member>
     </members>
 </doc>

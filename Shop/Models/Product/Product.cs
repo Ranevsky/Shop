@@ -1,6 +1,6 @@
 ﻿namespace Shop.Models.Product;
 
-public sealed class Product
+public sealed class Product : IDelete
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;
@@ -12,14 +12,13 @@ public sealed class Product
     public List<Characteristic>? Characteristics { get; set; } = new();
     public Warranty? Warranty { get; set; }
     public bool IsStock { get; set; }
-
     public bool IsNeedDeleteImage()
     {
         bool isChange = false;
 
         for (int i = 0; i < Images.Count; i++)
         {
-            if (!Images[i].IsExist())
+            if (!Images[i].IsExists)
             {
                 Console.WriteLine($"Remove image id '{Images[i].Id}'");
 #warning Image removing disabled
@@ -30,5 +29,31 @@ public sealed class Product
         }
 
         return isChange;
+    }
+    public void DeleteImage(Image image)
+    {
+        Image? img = Images.Find(i => object.ReferenceEquals(i, image));
+        if (img == null)
+        {
+            return;
+        }
+
+        Images.Remove(img);
+        img.Delete();
+    }
+
+
+    private string FullPath => $"{Program.PathToImages}{Program.ProductDirectory}/{Id}";
+    public bool IsExists => Directory.Exists(FullPath);
+    public void Delete()
+    {
+        if (IsExists)
+        {
+            Directory.Delete(FullPath, true);
+        }
+
+#warning Added logger information
+        Images.Clear();
+        Console.WriteLine($"Delete product id: '{Id}'");
     }
 }

@@ -6,29 +6,29 @@ namespace Shop.Repositories;
 public class Repository<T> : IRepository<T> where T : class
 {
     // db.Set<T>()
-    protected readonly ApplicationContext db;
+    protected readonly ApplicationContext Db;
     public Repository(ApplicationContext db)
     {
-        this.db = db;
+        Db = db;
     }
     public async Task AddAsync(T entity)
     {
-        await db.Set<T>().AddAsync(entity);
+        await Db.Set<T>().AddAsync(entity);
     }
     public async Task AddRangeAsync(IEnumerable<T> entity)
     {
-        await db.Set<T>().AddRangeAsync(entity);
+        await Db.Set<T>().AddRangeAsync(entity);
     }
     public virtual async Task<T?> FindAsync(int id)
     {
-        return await db.Set<T>().FindAsync();
+        return await Db.Set<T>().FindAsync();
     }
     public virtual IEnumerable<T> GetAll()
     {
-        return db.Set<T>();
+        return Db.Set<T>();
     }
     public void Update(T entity)
     {
-        db.Set<T>().Update(entity);
+        Db.Set<T>().Update(entity);
     }
 }

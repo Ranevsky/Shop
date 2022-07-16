@@ -10,12 +10,20 @@ namespace Shop;
 
 internal sealed class Program
 {
-    public static IConfiguration Configuration = null!;
-    public static string PathToImages = null!;
+    public static IConfiguration Configuration { get; private set; } = null!;
+    /// <summary>
+    /// Example: C:/.../wwwroot/images
+    /// </summary>
+    public static string PathToImages { get; private set; } = null!;
+    /// <summary>
+    /// Example: https://localhost:7287
+    /// </summary>
+    public static string ApplicationUrl { get; private set; } = null!;
+
     public const string ImageUrl = "/image";
     public const string ImageDirectory = "/images";
     public const string ProductDirectory = "/products";
-    public static string ApplicationUrl = null!;
+
     private static void GetApplicationUrl()
     {
         string path = $"{Directory.GetCurrentDirectory()}/Properties/launchSettings.json";

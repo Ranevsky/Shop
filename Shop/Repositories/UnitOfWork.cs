@@ -7,6 +7,7 @@ public sealed class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationContext db;
     private IProductRepository productRepository = null!;
+    private IImageRepository imageRepository = null!;
 
     public UnitOfWork(ApplicationContext db)
     {
@@ -24,6 +25,18 @@ public sealed class UnitOfWork : IUnitOfWork
             return productRepository;
         }
     }
+    public IImageRepository Images
+    {
+        get
+        {
+            if (imageRepository == null)
+            {
+                imageRepository = new ImageRepository(db);
+            }
+            return imageRepository;
+        }
+    }
+
     public async Task SaveAsync()
     {
         await db.SaveChangesAsync();

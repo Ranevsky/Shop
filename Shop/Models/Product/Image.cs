@@ -2,20 +2,33 @@
 
 namespace Shop.Models.Product;
 
-public sealed class Image
+public sealed class Image : IDelete
 {
     public int Id { get; set; }
+    /// <summary>
+    /// Example: foo.png
+    /// </summary>
     public string Name { get; set; } = null!;
+    /// <summary>
+    /// Example: products/2
+    /// </summary>
+#warning create class
+    public string Path { get; set; } = null!;
 
+#warning Maybe not exist, get url (if IsExist)
     [JsonIgnore]
-    public Product Product { get; set; } = null!;
-    public bool IsExist()
+    private string FullPath => $"{Program.PathToImages}{Path}/{Name}";
+    [JsonIgnore]
+    public bool IsExists => File.Exists(FullPath);
+    public void Delete()
     {
-        // File path
-        return File.Exists($"{Program.PathToImages}{Program.ProductDirectory}/{Name}");
-    }
-    public string GetUrl()
-    {
-        return $"{Program.ApplicationUrl}{Program.ImageUrl}{Program.ProductDirectory}/{Name}";
+        if (!IsExists)
+        {
+            return;
+        }
+
+#warning Add logger
+        File.Delete(FullPath);
+        Console.WriteLine($"Delete image '{Path}/{Name}'");
     }
 }

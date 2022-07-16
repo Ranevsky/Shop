@@ -28,6 +28,15 @@ public sealed class ProductProfile : Profile
                 opt.MapFrom(p => p.Characteristics);
             });
 
+        CreateMap<Image, ImageProductView>()
+            .ForMember(imageView => imageView.Url, opt =>
+            {
+                opt.MapFrom(image => ImageGetUrl(image));
+            });
+
+        CreateMap<Image, string>()
+            .ConvertUsing(image => ImageGetUrl(image));
+
         CreateMap<Characteristic, string>()
             .ConvertUsing(p => p.Description);
 
@@ -41,9 +50,6 @@ public sealed class ProductProfile : Profile
             {
                 opt.MapFrom(product => product.Images.FirstOrDefault());
             });
-
-        CreateMap<Image, string>()
-            .ConvertUsing(i => i.GetUrl());
 
         // ProductAddModel
         CreateMap<ProductAddModel, Product>();
@@ -71,5 +77,10 @@ public sealed class ProductProfile : Profile
             {
                 opt.MapFrom(s => s);
             });
+    }
+
+    public static string ImageGetUrl(Image image)
+    {
+        return $"{Program.ApplicationUrl}{Program.ImageUrl}{image.Path}/{image.Name}";
     }
 }

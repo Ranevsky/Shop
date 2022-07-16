@@ -77,7 +77,7 @@ public sealed class ProductController : ControllerBase
         return Ok(catalog);
     }
 
-    [HttpPut]
+    [HttpPost]
     public async Task<ActionResult> AddProductAsync(ProductAddModel productModel)
     {
         if (!ModelState.IsValid)
@@ -94,10 +94,37 @@ public sealed class ProductController : ControllerBase
         return base.CreatedAtAction("GetProductView", new { id = product.Id }, productView);
     }
 
+    [HttpDelete]
+    public async Task<ActionResult> DeleteProductAsync(int id)
+    {
+        await _uow.Products.Delete(id);
+        return Ok();
+    }
+
+
     [NonAction]
     private static IQueryable<T> Paging<T>(IQueryable<T> query, PagingModel paging)
     {
         return query.Skip((paging.Page - 1) * paging.Count).Take(paging.Count);
     }
 
+    [HttpPost("AddImages")]
+    public async Task<ActionResult> AddImages(int id, IFormFileCollection files)
+    {
+        try
+        {
+            await _uow.Products.AddImages(id, files, _uow.Images);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        return Ok();
+    }
+    [HttpDelete("DeleteImage")]
+    public async Task<ActionResult> DeleteImages(int productId, params int[] imagesId)
+    {
+        await _uow.Products.DeleteImages(productId, imagesId);
+        return Ok();
+    }
 }
