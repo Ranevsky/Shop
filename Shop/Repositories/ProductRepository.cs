@@ -9,14 +9,15 @@ using Shop.Repositories.Interfaces;
 
 namespace Shop.Repositories;
 
-public sealed class ProductRepository : Repository<Product>, IProductRepository
+public sealed class ProductRepository : IProductRepository
 {
-    public ProductRepository(ApplicationContext db) : base(db)
+    private readonly ApplicationContext _db = null!;
+    public ProductRepository(ApplicationContext db)
     {
-
+        _db = db;
     }
 
-    public override async Task<Product?> FindAsync(int id)
+    public async Task<Product?> FindAsync(int id)
     {
 #warning Watching product != null exception system
         IQueryable<Product>? products = GetAllInclusions();
@@ -27,7 +28,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
         }
         return product;
     }
-    public override IEnumerable<Product> GetAll()
+    public IEnumerable<Product> GetAll()
     {
         IQueryable<Product>? products = GetAllInclusions();
         return products;
@@ -38,7 +39,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
         #region Filters
         if (model.Type != null)
         {
-            ProductType? type = await Db.ProductTypes.FirstOrDefaultAsync(p => p.Name.ToUpper() == model.Type.ToUpper());
+            ProductType? type = await _db.ProductTypes.FirstOrDefaultAsync(p => p.Name.ToUpper() == model.Type.ToUpper());
 
             if (type == null)
             {
@@ -109,7 +110,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
 
     private IQueryable<Product> GetAllInclusions()
     {
-        return Db.Products
+        return _db.Products
             //.AsSplitQuery() // If there is a very large duplicate database
             .Include(p => p.Description)
             .Include(p => p.Characteristics)
@@ -119,7 +120,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
     }
     private IQueryable<Product> GetCatalogInclusions()
     {
-        return Db.Products
+        return _db.Products
             .Include(p => p.Type)
             .Include(p => p.Images.Take(1));
     }
@@ -135,7 +136,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
         }
         if (isChange)
         {
-            await Db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
         }
     }
 
@@ -150,14 +151,14 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
         }
 
         product.Delete();
-        Db.Remove(product);
-        await Db.SaveChangesAsync();
+        _db.Remove(product);
+        await _db.SaveChangesAsync();
     }
 
 
     public async Task AddImagesAsync(int id, IFormFileCollection uploadedFiles, IImageRepository imageRepository)
     {
-        Product? product = await Db.Products.Include(p => p.Images).FirstOrDefaultAsync(p => p.Id == id);
+        Product? product = await _db.Products.Include(p => p.Images).FirstOrDefaultAsync(p => p.Id == id);
 
         if (product == null)
         {
@@ -167,11 +168,11 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
         IEnumerable<Image> images = await imageRepository.CreateImagesAsync(uploadedFiles, $"{Program.ProductDirectory}/{product.Id}");
 
         product.Images.AddRange(images);
-        await Db.SaveChangesAsync();
+        await _db.SaveChangesAsync();
     }
     public async Task DeleteImagesAsync(int productId, params int[] imagesId)
     {
-        Product? product = await Db.Products.Include(p => p.Images).FirstOrDefaultAsync(p => p.Id == productId);
+        Product? product = await _db.Products.Include(p => p.Images).FirstOrDefaultAsync(p => p.Id == productId);
 
         if (product == null)
         {
@@ -188,7 +189,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
 
         Delete(product, imagesId);
 
-        await Db.SaveChangesAsync();
+        await _db.SaveChangesAsync();
 
         bool Checking(Dictionary<int, Image> dictionary, params int[] imagesId)
         {
@@ -208,6 +209,11 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
                 product.DeleteImage(dictionary[id]);
             }
         }
+    }
+
+    public async Task AddAsync(Product product)
+    {
+        await _db.Products.AddAsync(product);
     }
 }
 
