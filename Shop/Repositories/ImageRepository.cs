@@ -13,7 +13,7 @@ public sealed class ImageRepository : IImageRepository
     }
 
     // example: pathimage = "/products/id"
-    public async Task<IEnumerable<Image>> CreateImages(IFormFileCollection uploadedFiles, string pathImage)
+    public async Task<IEnumerable<Image>> CreateImagesAsync(IFormFileCollection uploadedFiles, string pathImage)
     {
         if (uploadedFiles.Count <= 0)
         {
@@ -49,7 +49,7 @@ public sealed class ImageRepository : IImageRepository
         {
             string fullPath = $"{directoryPath}/{filesNames[iteration]}";
 
-            Image image = await DownloadImage(file, fullPath, filesNames[iteration], pathImage);
+            Image image = await DownloadImageAsync(file, fullPath, filesNames[iteration], pathImage);
             images.Add(image);
 
             iteration++;
@@ -57,19 +57,19 @@ public sealed class ImageRepository : IImageRepository
         return images;
     }
 
-    private async Task<Image> DownloadImage(IFormFile uploadedFile, string FullPath, string nameImage, string pathImage)
+    private static async Task<Image> DownloadImageAsync(IFormFile uploadedFile, string FullPath, string nameImage, string pathImage)
     {
         // сохраняем файл в папку Files в каталоге wwwroot
-        using (FileStream? fileStream = new FileStream(FullPath, FileMode.Create))
+        using (FileStream? fileStream = new(FullPath, FileMode.Create))
         {
             await uploadedFile.CopyToAsync(fileStream);
         }
 
-        Image image = new Image { Name = nameImage, Path = pathImage };
+        Image image = new(){ Name = nameImage, Path = pathImage };
         return image;
     }
 
-    private bool IsImage(string type)
+    private static bool IsImage(string type)
     {
         return type.Equals("image", StringComparison.OrdinalIgnoreCase);
     }

@@ -59,7 +59,7 @@ public sealed class ProductController : ControllerBase
         IQueryable<Product> productsQuery;
         try
         {
-            productsQuery = _uow.Products.Paging(sortAndFilter).Result;
+            productsQuery = _uow.Products.PagingAsync(sortAndFilter).Result;
         }
         catch (Exception ex)
         {
@@ -97,7 +97,7 @@ public sealed class ProductController : ControllerBase
     [HttpDelete]
     public async Task<ActionResult> DeleteProductAsync(int id)
     {
-        await _uow.Products.Delete(id);
+        await _uow.Products.DeleteAsync(id);
         return Ok();
     }
 
@@ -109,11 +109,11 @@ public sealed class ProductController : ControllerBase
     }
 
     [HttpPost("AddImages")]
-    public async Task<ActionResult> AddImages(int id, IFormFileCollection files)
+    public async Task<ActionResult> AddImagesAsync(int id, IFormFileCollection files)
     {
         try
         {
-            await _uow.Products.AddImages(id, files, _uow.Images);
+            await _uow.Products.AddImagesAsync(id, files, _uow.Images);
         }
         catch (Exception ex)
         {
@@ -122,9 +122,9 @@ public sealed class ProductController : ControllerBase
         return Ok();
     }
     [HttpDelete("DeleteImage")]
-    public async Task<ActionResult> DeleteImages(int productId, params int[] imagesId)
+    public async Task<ActionResult> DeleteImagesAsync(int productId, params int[] imagesId)
     {
-        await _uow.Products.DeleteImages(productId, imagesId);
+        await _uow.Products.DeleteImagesAsync(productId, imagesId);
         return Ok();
     }
 }

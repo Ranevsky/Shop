@@ -23,7 +23,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
         Product? product = await products.FirstOrDefaultAsync(i => i.Id == id);
         if (product != null)
         {
-            await CheckingImageExists(product);
+            await CheckingImageExistsAsync(product);
         }
         return product;
     }
@@ -32,7 +32,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
         IQueryable<Product>? products = GetAllInclusions();
         return products;
     }
-    public async Task<IQueryable<Product>> Paging(SortAndFilter model)
+    public async Task<IQueryable<Product>> PagingAsync(SortAndFilter model)
     {
         IQueryable<Product>? productsQury = GetCatalogInclusions();
         #region Filters
@@ -123,7 +123,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
             .Include(p => p.Type)
             .Include(p => p.Images.Take(1));
     }
-    private async Task CheckingImageExists(params Product[] products)
+    private async Task CheckingImageExistsAsync(params Product[] products)
     {
         bool isChange = false;
         foreach (Product? product in products)
@@ -140,7 +140,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
     }
 
 
-    public async Task Delete(int id)
+    public async Task DeleteAsync(int id)
     {
         Product? product = await FindAsync(id);
 
@@ -155,7 +155,7 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
     }
 
 
-    public async Task AddImages(int id, IFormFileCollection uploadedFiles, IImageRepository imageRepository)
+    public async Task AddImagesAsync(int id, IFormFileCollection uploadedFiles, IImageRepository imageRepository)
     {
         Product? product = await Db.Products.Include(p => p.Images).FirstOrDefaultAsync(p => p.Id == id);
 
@@ -164,12 +164,12 @@ public sealed class ProductRepository : Repository<Product>, IProductRepository
             throw new Exception("Product not found");
         }
 
-        IEnumerable<Image> images = await imageRepository.CreateImages(uploadedFiles, $"{Program.ProductDirectory}/{product.Id}");
+        IEnumerable<Image> images = await imageRepository.CreateImagesAsync(uploadedFiles, $"{Program.ProductDirectory}/{product.Id}");
 
         product.Images.AddRange(images);
         await Db.SaveChangesAsync();
     }
-    public async Task DeleteImages(int productId, params int[] imagesId)
+    public async Task DeleteImagesAsync(int productId, params int[] imagesId)
     {
         Product? product = await Db.Products.Include(p => p.Images).FirstOrDefaultAsync(p => p.Id == productId);
 
