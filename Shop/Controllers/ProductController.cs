@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 using Shop.Exceptions;
 using Shop.Exceptions.Models;
@@ -71,10 +72,9 @@ public sealed class ProductController : ControllerBase
         {
             return ex.ActionResult;
         }
+        CatalogView? catalog = new() { CountProducts = await productsQuery.LongCountAsync() };
 
-        CatalogView? catalog = new() { CountProducts = productsQuery.LongCount() };
-
-        productsQuery = Paging(productsQuery, paging);
+        productsQuery = paging.Paging(productsQuery);
 
         Product[] products = productsQuery.ToArray();
         ProductInCatalogView[] productCatalog = _mapper.Map<ProductInCatalogView[]>(products);
@@ -130,13 +130,6 @@ public sealed class ProductController : ControllerBase
         }
 
         return Ok();
-    }
-
-
-    [NonAction]
-    private static IQueryable<T> Paging<T>(IQueryable<T> query, PagingModel paging)
-    {
-        return query.Skip((paging.Page - 1) * paging.Count).Take(paging.Count);
     }
 
     /// <summary>

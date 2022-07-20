@@ -13,4 +13,8 @@ public class PagingModel
     /// Default: <b>1</b>
     /// </summary>
     public int Page { get; set; } = 1;
+    public IQueryable<T> Paging<T>(IQueryable<T> query)
+    {
+        return query.Skip((Page - 1) * Count).Take(Count);
+    }
 }
