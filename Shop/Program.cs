@@ -29,14 +29,14 @@ internal sealed class Program
         string path = $"{Directory.GetCurrentDirectory()}/Properties/launchSettings.json";
         if (!File.Exists(path))
         {
-            throw new Exception("'LaunchSettings.json' not found");
+            throw new ApplicationException("'LaunchSettings.json' not found");
         }
 
         string text = File.ReadAllText(path);
 
         JsonNode js = JsonNode.Parse(text)!;
         string? applicationUr = js["profiles"]?["Shop"]?["applicationUrl"]?.ToString().Split(';')[0]
-            ?? throw new Exception("file 'launchSettings.json' configured incorrectly, path not found (profiles -> Shop -> applicationUrl)");
+            ?? throw new ApplicationException("file 'launchSettings.json' configured incorrectly, path not found (profiles -> Shop -> applicationUrl)");
 
         ApplicationUrl = applicationUr;
     }
@@ -46,7 +46,7 @@ internal sealed class Program
         if (!Directory.Exists(PathToImages))
         {
             // If the folder is not created and suddenly it is expected that there will be files
-            throw new Exception($"Not exist '{PathToImages}', please create directory");
+            throw new ApplicationException($"Not exist '{PathToImages}', please create directory");
         }
     }
     private static string GetXmlCommentsPath()

@@ -1,4 +1,5 @@
 ﻿using Shop.Context;
+using Shop.Exceptions;
 using Shop.Models.Product;
 using Shop.Repositories.Interfaces;
 
@@ -12,12 +13,12 @@ public sealed class ImageRepository : IImageRepository
         Db = db;
     }
 
-    // example: pathimage = "/products/id"
+    // example: pathimage = "/products/id
     public async Task<IEnumerable<Image>> CreateImagesAsync(IFormFileCollection uploadedFiles, string pathImage)
     {
-        if (uploadedFiles.Count <= 0)
+        if (uploadedFiles.Count < 1)
         {
-            throw new Exception("Sended zero images");
+            throw new UploadFileIsEmptyException();
         }
 
         string[] filesNames = new string[uploadedFiles.Count];
@@ -28,7 +29,7 @@ public sealed class ImageRepository : IImageRepository
             string type = splittedType[0];
             if (!IsImage(type))
             {
-                throw new Exception($"File '{file.FileName}' is not image");
+                throw new FileIsNotImageException(file.FileName);
             }
 
             string format = splittedType[1];
@@ -65,7 +66,7 @@ public sealed class ImageRepository : IImageRepository
             await uploadedFile.CopyToAsync(fileStream);
         }
 
-        Image image = new(){ Name = nameImage, Path = pathImage };
+        Image image = new() { Name = nameImage, Path = pathImage };
         return image;
     }
 

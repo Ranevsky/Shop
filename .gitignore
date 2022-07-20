@@ -5,7 +5,7 @@
 
 # Ignore Todo
 TODO.txt
-Shop/Controllers/Test.cs
+Shop/Controllers/TestController.cs
 Shop/Migrations/*
 
 # User-specific files

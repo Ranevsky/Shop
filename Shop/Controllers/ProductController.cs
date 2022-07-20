@@ -2,6 +2,8 @@
 
 using Microsoft.AspNetCore.Mvc;
 
+using Shop.Exceptions;
+using Shop.Exceptions.Models;
 using Shop.Models.Catalog;
 using Shop.Models.Product;
 using Shop.Repositories.Interfaces;
@@ -24,22 +26,27 @@ public sealed class ProductController : ControllerBase
     /// Get product
     /// </summary>
     /// <param name="id">Product id</param>
-    /// <returns>Returns ProductView</returns>
     /// <response code="200">Success</response>
+    /// <response code="404">Product not found</response>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ProductView), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProductView>> GetProductViewAsync(int id)
     {
-        Product? product = await _uow.Products.FindAsync(id);
-        if (product == null)
+        Product product;
+        try
         {
-            return NotFound();
+            product = await _uow.Products.FindAsync(id);
         }
+        catch (ActionResultException ex)
+        {
+            return ex.ActionResult;
+        }
+
         product.Popularity++;
         await _uow.SaveAsync();
 
-        ProductView? viewProduct = _mapper.Map<ProductView>(product);
+        ProductView viewProduct = _mapper.Map<ProductView>(product);
         return Ok(viewProduct);
     }
 
@@ -48,22 +55,21 @@ public sealed class ProductController : ControllerBase
     /// </summary>
     /// <param name="sortAndFilter">Sorting and filter model</param>
     /// <param name="paging">Model with pages and quantity of products</param>
-    /// <returns>Returns CatalogView</returns>
     /// <response code="200">Success</response>
     /// <response code="400">Bad Request</response>
     [HttpGet("Paging")]
     [ProducesResponseType(typeof(CatalogView), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    public ActionResult<CatalogView> Paging([FromQuery] SortAndFilter sortAndFilter, [FromQuery] PagingModel paging)
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<CatalogView>> PagingAsync([FromQuery] SortAndFilter sortAndFilter, [FromQuery] PagingModel paging)
     {
         IQueryable<Product> productsQuery;
         try
         {
-            productsQuery = _uow.Products.PagingAsync(sortAndFilter).Result;
+            productsQuery = await _uow.Products.SortAndFilterAsync(sortAndFilter);
         }
-        catch (Exception ex)
+        catch (ActionResultException ex)
         {
-            return BadRequest(ex.Message);
+            return ex.ActionResult;
         }
 
         CatalogView? catalog = new() { CountProducts = productsQuery.LongCount() };
@@ -77,27 +83,52 @@ public sealed class ProductController : ControllerBase
         return Ok(catalog);
     }
 
+    /// <summary>
+    /// Add product
+    /// </summary>
+    /// <param name="productModel">Model for Product</param>
+    /// <response code="201">Success</response>
+    /// <response code="400">Bad Request</response>
     [HttpPost]
+    [ProducesResponseType(typeof(ProductView), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> AddProductAsync(ProductAddModel productModel)
     {
         if (!ModelState.IsValid)
         {
-            return Content("Model is not valid");
+            return new BadRequestModel("Model is not valid").ActionResult;
         }
 
         Product product = _mapper.Map<Product>(productModel);
 
         await _uow.Products.AddAsync(product);
         await _uow.SaveAsync();
-
+#warning change actionResult
         ProductView productView = _mapper.Map<ProductView>(product);
         return base.CreatedAtAction("GetProductView", new { id = product.Id }, productView);
     }
 
+    /// <summary>
+    /// Delete Product
+    /// </summary>
+    /// <param name="id">Product id</param>
+    /// <returns></returns>
+    /// <response code="200">Success</response>
+    /// <response code="404">Not Found</response>
     [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteProductAsync(int id)
     {
-        await _uow.Products.DeleteAsync(id);
+        try
+        {
+            await _uow.Products.DeleteAsync(id);
+        }
+        catch (ActionResultException ex)
+        {
+            return ex.ActionResult;
+        }
+
         return Ok();
     }
 
@@ -108,6 +139,18 @@ public sealed class ProductController : ControllerBase
         return query.Skip((paging.Page - 1) * paging.Count).Take(paging.Count);
     }
 
+    /// <summary>
+    /// Add images for Product
+    /// </summary>
+    /// <param name="id">Product id</param>
+    /// <param name="files">Image files</param>
+    /// <returns></returns>
+    /// <response code="200">Success</response>
+    /// <response code="404">Not Found</response>
+    /// <response code="400">Bad Request</response>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     [HttpPost("AddImages")]
     public async Task<ActionResult> AddImagesAsync(int id, IFormFileCollection files)
     {
@@ -115,16 +158,35 @@ public sealed class ProductController : ControllerBase
         {
             await _uow.Products.AddImagesAsync(id, files, _uow.Images);
         }
-        catch (Exception ex)
+        catch (ActionResultException ex)
         {
-            return BadRequest(ex.Message);
+            return ex.ActionResult;
         }
         return Ok();
     }
+
+    /// <summary>
+    /// Delete images from Product
+    /// </summary>
+    /// <param name="id">Product id</param>
+    /// <param name="imagesId">Collection </param>
+    /// <returns></returns>
+    /// <response code="200">Success</response>
+    /// <response code="404">Not Found</response>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     [HttpDelete("DeleteImage")]
-    public async Task<ActionResult> DeleteImagesAsync(int productId, params int[] imagesId)
+    public async Task<ActionResult> DeleteImagesAsync(int id, IEnumerable<int> imagesId)
     {
-        await _uow.Products.DeleteImagesAsync(productId, imagesId);
+        try
+        {
+            await _uow.Products.DeleteImagesAsync(id, imagesId);
+        }
+        catch (ActionResultException ex)
+        {
+            return ex.ActionResult;
+        }
+
         return Ok();
     }
 }

@@ -9,18 +9,55 @@
             Get product
             </summary>
             <param name="id">Product id</param>
-            <returns>Returns ProductView</returns>
             <response code="200">Success</response>
+            <response code="404">Product not found</response>
         </member>
-        <member name="M:Shop.Controllers.ProductController.Paging(Shop.Models.Catalog.SortAndFilter,Shop.Models.Catalog.PagingModel)">
+        <member name="M:Shop.Controllers.ProductController.PagingAsync(Shop.Models.Catalog.SortAndFilter,Shop.Models.Catalog.PagingModel)">
             <summary>
             Gets products after sorting and filtering
             </summary>
             <param name="sortAndFilter">Sorting and filter model</param>
             <param name="paging">Model with pages and quantity of products</param>
-            <returns>Returns CatalogView</returns>
             <response code="200">Success</response>
             <response code="400">Bad Request</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductController.AddProductAsync(Shop.Models.Product.ProductAddModel)">
+            <summary>
+            Add product
+            </summary>
+            <param name="productModel">Model for Product</param>
+            <response code="201">Success</response>
+            <response code="400">Bad Request</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductController.DeleteProductAsync(System.Int32)">
+            <summary>
+            Delete Product
+            </summary>
+            <param name="id">Product id</param>
+            <returns></returns>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductController.AddImagesAsync(System.Int32,Microsoft.AspNetCore.Http.IFormFileCollection)">
+            <summary>
+            Add images for Product
+            </summary>
+            <param name="id">Product id</param>
+            <param name="files">Image files</param>
+            <returns></returns>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductController.DeleteImagesAsync(System.Int32,System.Collections.Generic.IEnumerable{System.Int32})">
+            <summary>
+            Delete images from Product
+            </summary>
+            <param name="id">Product id</param>
+            <param name="imagesId">Collection </param>
+            <returns></returns>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
         </member>
         <member name="P:Shop.Models.Catalog.PagingModel.Count">
             <summary>
@@ -115,6 +152,28 @@
             <summary>
             Example: https://localhost:7287
             </summary>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IImageRepository.CreateImagesAsync(Microsoft.AspNetCore.Http.IFormFileCollection,System.String)">
+            <exception cref="T:Shop.Exceptions.UploadFileIsEmptyException"></exception>
+            <exception cref="T:Shop.Exceptions.FileIsNotImageException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductRepository.FindAsync(System.Int32)">
+            <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductRepository.DeleteAsync(System.Int32)">
+            <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductRepository.SortAndFilterAsync(Shop.Models.Catalog.SortAndFilter)">
+            <exception cref="T:Shop.Exceptions.BadRequestException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductRepository.AddImagesAsync(System.Int32,Microsoft.AspNetCore.Http.IFormFileCollection,Shop.Repositories.Interfaces.IImageRepository)">
+            <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.UploadFileIsEmptyException"></exception>
+            <exception cref="T:Shop.Exceptions.FileIsNotImageException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductRepository.DeleteImagesAsync(System.Int32,System.Collections.Generic.IEnumerable{System.Int32})">
+            <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.ProductNotHaveImageException"></exception>
         </member>
     </members>
 </doc>
