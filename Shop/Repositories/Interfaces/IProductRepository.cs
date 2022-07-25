@@ -8,7 +8,8 @@ public interface IProductRepository
 {
     /// <exception cref="ProductNotFoundException"></exception>
     Task<Product> FindAsync(int productId);
-    Task AddAsync(Product product);
+    Task AddAsync(Product product, IProductTypeRepository productTypeRepository);
+
     /// <exception cref="ProductNotFoundException"></exception>
     Task DeleteAsync(int productId);
     /// <exception cref="BadRequestException"></exception>

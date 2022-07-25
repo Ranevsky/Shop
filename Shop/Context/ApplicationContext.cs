@@ -14,4 +14,13 @@ public sealed class ApplicationContext : DbContext
     public DbSet<Description> Descriptions => Set<Description>();
 
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<ProductType>()
+            .HasMany(p => p.Products)
+            .WithOne(p => p.Type)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
 }

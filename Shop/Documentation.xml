@@ -59,6 +59,57 @@
             <response code="200">Success</response>
             <response code="404">Not Found</response>
         </member>
+        <member name="M:Shop.Controllers.ProductTypeController.GetAllTypes">
+            <summary>
+            Get all types
+            </summary>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductTypeController.DeleteAsync(System.Int32)">
+            <summary>
+            Delete product type
+            </summary>
+            <param name="id">Product type id</param>
+            <response code="200">Success</response>
+            <response code="400">Bad Request</response>
+            <response code="404">Not found</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductTypeController.ChangeNameAsync(System.Int32,System.String)">
+            <summary>
+            Change product type name
+            </summary>
+            <param name="id">Product type id</param>
+            <param name="newName">New name for product</param>
+            <response code="200">Success</response>
+            <response code="400">Bad Request</response>
+            <response code="404">Not found</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductTypeController.GetAsync(System.Int32)">
+            <summary>
+            Get product type
+            </summary>
+            <param name="id">Product type id</param>
+            <response code="200">Success</response>
+            <response code="400">Bad Request</response>
+            <response code="404">Not found</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductTypeController.AddAsync(Shop.Models.Product.ProductTypeAddModel)">
+            <summary>
+            Add product type
+            </summary>
+            <param name="type">Product to add</param>
+            <response code="200">Success</response>
+            <response code="400">Bad Request</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductTypeController.GetCountAsync(System.Int32)">
+            <summary>
+            Get count product type
+            </summary>
+            <param name="id">Product type id</param>
+            <response code="200">Success</response>
+            <response code="400">Bad Request</response>
+            <response code="404">Not Found</response>
+        </member>
         <member name="P:Shop.Models.Catalog.PagingModel.Count">
             <summary>
             The count you need to withdraw<br></br>
@@ -143,6 +194,11 @@
             Example: products/2
             </summary>
         </member>
+        <member name="P:Shop.Models.Product.ProductTypeAddModel.Name">
+            <summary>
+            Product type name
+            </summary>
+        </member>
         <member name="P:Shop.Program.PathToImages">
             <summary>
             Example: C:/.../wwwroot/images
@@ -174,6 +230,36 @@
         <member name="M:Shop.Repositories.Interfaces.IProductRepository.DeleteImagesAsync(System.Int32,System.Collections.Generic.IEnumerable{System.Int32})">
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
             <exception cref="T:Shop.Exceptions.ProductNotHaveImageException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.ChangeNameAsync(System.Int32,System.String)">
+            <exception cref="T:Shop.Exceptions.ProductTypeIsExistException"></exception>
+            <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.GetAsync(System.String,System.Boolean)">
+            <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.GetAsync(System.Int32,System.Boolean)">
+            <exception cref="T:Shop.Exceptions.ProductTypeIdNegativeException"></exception>
+            <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.DeleteAsync(System.Int32,Shop.Repositories.Interfaces.IProductRepository)">
+            <exception cref="T:Shop.Exceptions.ProductTypeIdNegativeException"></exception>
+            <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.AddAsync(Shop.Models.Product.ProductType)">
+            <exception cref="T:Shop.Exceptions.ProductTypeIsExistException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.AddNotExistAsync(Shop.Models.Product.ProductType)">
+            <summary>
+            Don't use, if you are not sure of existing
+            </summary>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.GetCountAsync(System.String)">
+            <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.GetCountAsync(System.Int32)">
+            <exception cref="T:Shop.Exceptions.ProductTypeIdNegativeException"></exception>
+            <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
         </member>
     </members>
 </doc>

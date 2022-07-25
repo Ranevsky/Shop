@@ -29,8 +29,16 @@ public sealed class ProductRepository : IProductRepository
         _db = db;
     }
 
-    public async Task AddAsync(Product product)
+    public async Task AddAsync(Product product, IProductTypeRepository productTypeRepository)
     {
+        if (productTypeRepository.TryGet(product.Type.Name, out ProductType? typeInDb, true))
+        {
+            product.Type = typeInDb!;
+        }
+        else
+        {
+            await productTypeRepository.AddNotExistAsync(product.Type);
+        }
         await _db.Products.AddAsync(product);
     }
     public async Task<Product> FindAsync(int id)
@@ -47,7 +55,6 @@ public sealed class ProductRepository : IProductRepository
 
         product.Delete();
         _db.Remove(product);
-        await _db.SaveChangesAsync();
     }
 
     public async Task<IQueryable<Product>> SortAndFilterAsync(SortAndFilter model)
@@ -131,7 +138,6 @@ public sealed class ProductRepository : IProductRepository
         IEnumerable<Image> images = await imageRepository.CreateImagesAsync(uploadedFiles, $"{Program.ProductDirectory}/{product.Id}");
 
         product.Images.AddRange(images);
-        await _db.SaveChangesAsync();
     }
     public async Task DeleteImagesAsync(int productId, IEnumerable<int> imagesId)
     {
@@ -159,8 +165,6 @@ public sealed class ProductRepository : IProductRepository
         {
             product.DeleteImage(dictionary[id]);
         }
-
-        await _db.SaveChangesAsync();
     }
 
     private IQueryable<Product> GetAllInclusions()

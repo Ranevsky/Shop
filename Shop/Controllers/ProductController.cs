@@ -101,7 +101,7 @@ public sealed class ProductController : ControllerBase
 
         Product product = _mapper.Map<Product>(productModel);
 
-        await _uow.Products.AddAsync(product);
+        await _uow.Products.AddAsync(product, _uow.ProductTypes);
         await _uow.SaveAsync();
 #warning change actionResult
         ProductView productView = _mapper.Map<ProductView>(product);
@@ -129,6 +129,8 @@ public sealed class ProductController : ControllerBase
             return ex.ActionResult;
         }
 
+        await _uow.SaveAsync();
+
         return Ok();
     }
 
@@ -155,6 +157,9 @@ public sealed class ProductController : ControllerBase
         {
             return ex.ActionResult;
         }
+
+        await _uow.SaveAsync();
+
         return Ok();
     }
 
@@ -179,6 +184,8 @@ public sealed class ProductController : ControllerBase
         {
             return ex.ActionResult;
         }
+
+        await _uow.SaveAsync();
 
         return Ok();
     }

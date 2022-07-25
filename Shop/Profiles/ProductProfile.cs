@@ -77,6 +77,9 @@ public sealed class ProductProfile : Profile
             {
                 opt.MapFrom(s => s);
             });
+
+        // ProductType
+        CreateMap<ProductTypeAddModel, ProductType>();
     }
 
     public static string ImageGetUrl(Image image)

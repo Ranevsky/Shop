@@ -8,6 +8,7 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly ApplicationContext db;
     private IProductRepository productRepository = null!;
     private IImageRepository imageRepository = null!;
+    private IProductTypeRepository productTypeRepository = null!;
 
     public UnitOfWork(ApplicationContext db)
     {
@@ -34,6 +35,17 @@ public sealed class UnitOfWork : IUnitOfWork
                 imageRepository = new ImageRepository(db);
             }
             return imageRepository;
+        }
+    }
+    public IProductTypeRepository ProductTypes
+    {
+        get
+        {
+            if (productTypeRepository == null)
+            {
+                productTypeRepository = new ProductTypeRepository(db);
+            }
+            return productTypeRepository;
         }
     }
 
