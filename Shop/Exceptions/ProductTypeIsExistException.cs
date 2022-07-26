@@ -2,7 +2,7 @@
 
 namespace Shop.Exceptions;
 
-public class ProductTypeIsExistException : IsExistException
+public sealed class ProductTypeIsExistException : IsExistException
 {
     public ProductTypeIsExistException()
         : base("Product type is exist")

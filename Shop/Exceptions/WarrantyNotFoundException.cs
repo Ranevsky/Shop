@@ -1,6 +1,6 @@
 ﻿namespace Shop.Exceptions;
 
-public class WarrantyNotFoundException : NotFoundException
+public sealed class WarrantyNotFoundException : NotFoundException
 {
     public WarrantyNotFoundException()
         : base("Warranty not found")

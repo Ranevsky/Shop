@@ -1,6 +1,6 @@
 ﻿namespace Shop.Models.Product;
 
-public class ProductTypeAddModel
+public sealed class ProductTypeAddModel
 {
     /// <summary>
     /// Product type name

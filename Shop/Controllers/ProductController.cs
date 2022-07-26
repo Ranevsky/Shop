@@ -3,7 +3,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-using Shop.Exceptions;
 using Shop.Exceptions.Models;
 using Shop.Models.Catalog;
 using Shop.Models.Product;
@@ -56,7 +55,7 @@ public sealed class ProductController : ControllerBase
     public async Task<ActionResult<CatalogView>> PagingAsync([FromQuery] SortAndFilter sortAndFilter, [FromQuery] PagingModel paging)
     {
         IQueryable<Product> productsQuery = await _uow.Products.SortAndFilterAsync(sortAndFilter);
-        
+
         CatalogView? catalog = new() { CountProducts = await productsQuery.LongCountAsync() };
 
         productsQuery = paging.Paging(productsQuery);
@@ -128,7 +127,7 @@ public sealed class ProductController : ControllerBase
     public async Task<ActionResult> AddImagesAsync(int id, IFormFileCollection files)
     {
         await _uow.Products.AddImagesAsync(id, files, _uow.Images);
-        
+
         await _uow.SaveAsync();
 
         return Ok();
@@ -148,7 +147,7 @@ public sealed class ProductController : ControllerBase
     public async Task<ActionResult> DeleteImagesAsync(int id, IEnumerable<int> imagesId)
     {
         await _uow.Products.DeleteImagesAsync(id, imagesId);
-        
+
         await _uow.SaveAsync();
 
         return Ok();

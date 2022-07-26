@@ -2,7 +2,7 @@
 
 namespace Shop.Middlewares;
 
-public class ActualResultExceptionMiddleware
+public sealed class ActualResultExceptionMiddleware
 {
     private readonly RequestDelegate _next;
     public ActualResultExceptionMiddleware(RequestDelegate next)

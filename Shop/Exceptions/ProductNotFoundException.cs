@@ -1,6 +1,6 @@
 ﻿namespace Shop.Exceptions;
 
-public class ProductNotFoundException : NotFoundException
+public sealed class ProductNotFoundException : NotFoundException
 {
     public ProductNotFoundException()
         : base("Product not found")

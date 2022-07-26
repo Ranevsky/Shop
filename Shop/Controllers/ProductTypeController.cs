@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-using Shop.Exceptions;
 using Shop.Exceptions.Models;
 using Shop.Models.Product;
 using Shop.Repositories.Interfaces;
@@ -10,7 +9,7 @@ using Shop.Repositories.Interfaces;
 namespace Shop.Controllers;
 
 [Route("[controller]")]
-public class ProductTypeController : ControllerBase
+public sealed class ProductTypeController : ControllerBase
 {
     private readonly IUnitOfWork _uow;
     private readonly IMapper _mapper;
@@ -42,8 +41,8 @@ public class ProductTypeController : ControllerBase
     /// <response code="404">Not found</response>
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorModel),StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ErrorModel),StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteAsync(int id)
     {
         await _uow.ProductTypes.DeleteAsync(id, _uow.Products);

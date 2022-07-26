@@ -23,7 +23,7 @@ public sealed class ProductRepository : IProductRepository
         return product ?? throw new ProductNotFoundException(id.ToString());
     }
 
-    private readonly ApplicationContext _db = null!;
+    private readonly ApplicationContext _db;
     public ProductRepository(ApplicationContext db)
     {
         _db = db;
@@ -75,7 +75,7 @@ public sealed class ProductRepository : IProductRepository
         }
 
         Warranty? warranty = await _db.Warranties.FirstOrDefaultAsync(w => w.Id == warrantyId);
-        
+
         if (warranty == null)
         {
             throw new WarrantyNotFoundException(warrantyId.ToString());

@@ -1,6 +1,6 @@
 ﻿namespace Shop.Models.Catalog;
 
-public class PagingModel
+public sealed class PagingModel
 {
     /// <summary>
     /// The count you need to withdraw<br></br>

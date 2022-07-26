@@ -8,7 +8,7 @@ using Shop.Repositories.Interfaces;
 
 namespace Shop.Repositories;
 
-public class ProductTypeRepository : IProductTypeRepository
+public sealed class ProductTypeRepository : IProductTypeRepository
 {
     private static void NormalFormat(ProductType type)
     {
@@ -103,7 +103,7 @@ public class ProductTypeRepository : IProductTypeRepository
     {
         ProductType type = await GetAsync(name, true);
         await _db.Entry(type).Collection(t => t.Products).LoadAsync();
-        
+
         return type.Products.Count;
     }
     public async Task<int> GetCountAsync(int id)

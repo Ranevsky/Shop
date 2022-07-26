@@ -1,6 +1,6 @@
 ﻿namespace Shop.Models.Product;
 
-public class ProductAddModel
+public sealed class ProductAddModel
 {
     public string Name { get; set; } = null!;
     public string Type { get; set; } = null!;

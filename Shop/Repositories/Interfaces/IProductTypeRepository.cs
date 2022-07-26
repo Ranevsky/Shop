@@ -1,5 +1,5 @@
-﻿using Shop.Models.Product;
-using Shop.Exceptions;
+﻿using Shop.Exceptions;
+using Shop.Models.Product;
 
 namespace Shop.Repositories.Interfaces;
 
