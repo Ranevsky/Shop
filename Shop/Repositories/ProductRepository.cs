@@ -12,7 +12,7 @@ namespace Shop.Repositories;
 
 public sealed class ProductRepository : IProductRepository
 {
-    private static async Task<Product> FindAsync(int id, IQueryable<Product> queryInclusions)
+    private static async Task<Product> GetAsync(int id, IQueryable<Product> queryInclusions)
     {
         if (id < 1)
         {
@@ -43,7 +43,7 @@ public sealed class ProductRepository : IProductRepository
     }
     public async Task<Product> GetAsync(int id)
     {
-        Product product = await FindAsync(id, GetAllInclusions());
+        Product product = await GetAsync(id, GetAllInclusions());
 
         await CheckingImageExistsAsync(product);
 
@@ -164,7 +164,7 @@ public sealed class ProductRepository : IProductRepository
     }
     public async Task AddImagesAsync(int productId, IFormFileCollection uploadedFiles, IImageRepository imageRepository)
     {
-        Product product = await FindAsync(productId, _db.Products.Include(p => p.Images));
+        Product product = await GetAsync(productId, _db.Products.Include(p => p.Images));
 #warning maybe .CreateImagesAsync(..., string -> method) ?
         IEnumerable<Image> images = await imageRepository.CreateImagesAsync(uploadedFiles, $"{Program.ProductDirectory}/{product.Id}");
 
@@ -172,7 +172,7 @@ public sealed class ProductRepository : IProductRepository
     }
     public async Task DeleteImagesAsync(int productId, IEnumerable<int> imagesId)
     {
-        Product product = await FindAsync(productId, _db.Products.Include(p => p.Images));
+        Product product = await GetAsync(productId, _db.Products.Include(p => p.Images));
 
         Dictionary<int, Image> dictionary = new(
             product.Images.Select(i => new KeyValuePair<int, Image>(i.Id, i)));

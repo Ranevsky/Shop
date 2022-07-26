@@ -10,6 +10,7 @@
             </summary>
             <param name="id">Product id</param>
             <response code="200">Success</response>
+            <response code="400">Bad Request</response>
             <response code="404">Product not found</response>
         </member>
         <member name="M:Shop.Controllers.ProductController.PagingAsync(Shop.Models.Catalog.SortAndFilter,Shop.Models.Catalog.PagingModel)">
@@ -36,6 +37,7 @@
             <param name="id">Product id</param>
             <returns></returns>
             <response code="200">Success</response>
+            <response code="400">Bad Request</response>
             <response code="404">Not Found</response>
         </member>
         <member name="M:Shop.Controllers.ProductController.AddImagesAsync(System.Int32,Microsoft.AspNetCore.Http.IFormFileCollection)">
@@ -46,8 +48,8 @@
             <param name="files">Image files</param>
             <returns></returns>
             <response code="200">Success</response>
-            <response code="404">Not Found</response>
             <response code="400">Bad Request</response>
+            <response code="404">Not Found</response>
         </member>
         <member name="M:Shop.Controllers.ProductController.DeleteImagesAsync(System.Int32,System.Collections.Generic.IEnumerable{System.Int32})">
             <summary>
@@ -57,6 +59,7 @@
             <param name="imagesId">Collection </param>
             <returns></returns>
             <response code="200">Success</response>
+            <response code="400">Bad Request</response>
             <response code="404">Not Found</response>
         </member>
         <member name="M:Shop.Controllers.ProductController.SetWarrantyAsync(System.Int32,System.Nullable{System.Int32})">
@@ -225,29 +228,35 @@
         </member>
         <member name="M:Shop.Repositories.Interfaces.IProductRepository.GetAsync(System.Int32)">
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IProductRepository.DeleteAsync(System.Int32)">
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IProductRepository.SortAndFilterAsync(Shop.Models.Catalog.SortAndFilter)">
             <exception cref="T:Shop.Exceptions.BadRequestException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IProductRepository.AddImagesAsync(System.Int32,Microsoft.AspNetCore.Http.IFormFileCollection,Shop.Repositories.Interfaces.IImageRepository)">
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
             <exception cref="T:Shop.Exceptions.UploadFileIsEmptyException"></exception>
             <exception cref="T:Shop.Exceptions.FileIsNotImageException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IProductRepository.DeleteImagesAsync(System.Int32,System.Collections.Generic.IEnumerable{System.Int32})">
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
             <exception cref="T:Shop.Exceptions.ProductNotHaveImageException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IProductRepository.SetWarrantyAsync(System.Int32,System.Int32)">
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
             <exception cref="T:Shop.Exceptions.WarrantyIdNegativeException"></exception>
             <exception cref="T:Shop.Exceptions.WarrantyNotFoundException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IProductRepository.SetWarrantyAsync(System.Int32,Shop.Models.Product.Warranty)">
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.ChangeNameAsync(System.Int32,System.String)">
             <exception cref="T:Shop.Exceptions.ProductTypeIsExistException"></exception>

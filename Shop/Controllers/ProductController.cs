@@ -27,9 +27,11 @@ public sealed class ProductController : ControllerBase
     /// </summary>
     /// <param name="id">Product id</param>
     /// <response code="200">Success</response>
+    /// <response code="400">Bad Request</response>
     /// <response code="404">Product not found</response>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ProductView), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProductView>> GetProductViewAsync(int id)
     {
@@ -98,9 +100,11 @@ public sealed class ProductController : ControllerBase
     /// <param name="id">Product id</param>
     /// <returns></returns>
     /// <response code="200">Success</response>
+    /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteProductAsync(int id)
     {
@@ -118,11 +122,11 @@ public sealed class ProductController : ControllerBase
     /// <param name="files">Image files</param>
     /// <returns></returns>
     /// <response code="200">Success</response>
-    /// <response code="404">Not Found</response>
     /// <response code="400">Bad Request</response>
+    /// <response code="404">Not Found</response>
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     [HttpPost("AddImages")]
     public async Task<ActionResult> AddImagesAsync(int id, IFormFileCollection files)
     {
@@ -140,8 +144,10 @@ public sealed class ProductController : ControllerBase
     /// <param name="imagesId">Collection </param>
     /// <returns></returns>
     /// <response code="200">Success</response>
+    /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     [HttpDelete("DeleteImage")]
     public async Task<ActionResult> DeleteImagesAsync(int id, IEnumerable<int> imagesId)
@@ -152,7 +158,6 @@ public sealed class ProductController : ControllerBase
 
         return Ok();
     }
-
 
     /// <summary>
     /// Set warranty for product
