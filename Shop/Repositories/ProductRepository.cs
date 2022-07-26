@@ -12,15 +12,24 @@ namespace Shop.Repositories;
 
 public sealed class ProductRepository : IProductRepository
 {
-    private static async Task<Product> GetAsync(int id, IQueryable<Product> queryInclusions)
+    private static async Task<Product> GetAsync(int id, IQueryable<Product> queryInclusions, bool tracking = false)
     {
         if (id < 1)
         {
             throw new ProductIdNegativeException(id.ToString());
         }
-        Product? product = await queryInclusions.FirstOrDefaultAsync(p => p.Id == id);
+        Product? product = await GetQuery(queryInclusions, tracking).FirstOrDefaultAsync(p => p.Id == id);
 
         return product ?? throw new ProductNotFoundException(id.ToString());
+    }
+    private static IQueryable<Product> GetQuery(IQueryable<Product> query, bool tracking = false)
+    {
+        return tracking ? query.AsTracking() : query.AsNoTracking();
+    }
+    private IQueryable<Product> GetQuery(bool tracking = false)
+    {
+        IQueryable<Product> query = _db.Products;
+        return GetQuery(query, tracking);
     }
 
     private readonly ApplicationContext _db;
@@ -41,17 +50,17 @@ public sealed class ProductRepository : IProductRepository
         }
         await _db.Products.AddAsync(product);
     }
-    public async Task<Product> GetAsync(int id)
+    public async Task<Product> GetAsync(int id, bool tracking = false)
     {
-        Product product = await GetAsync(id, GetAllInclusions());
-
+        Product product = await GetAsync(id, GetAllInclusions(), tracking);
+#warning May be existing
         await CheckingImageExistsAsync(product);
 
         return product;
     }
     public async Task DeleteAsync(int id)
     {
-        Product product = await GetAsync(id);
+        Product product = await GetAsync(id, true);
 
         product.Delete();
 
@@ -65,14 +74,15 @@ public sealed class ProductRepository : IProductRepository
     }
     public async Task SetWarrantyAsync(int productId, int warrantyId)
     {
-        Product product = await GetAsync(productId);
-
 #warning Make warranty repo
 
         if (warrantyId < 1)
         {
             throw new WarrantyIdNegativeException(warrantyId.ToString());
         }
+
+        // Optimize, make warranty repo
+        Product product = await GetAsync(productId, true);
 
         Warranty? warranty = await _db.Warranties.FirstOrDefaultAsync(w => w.Id == warrantyId);
 
@@ -84,7 +94,7 @@ public sealed class ProductRepository : IProductRepository
     }
     public async Task SetWarrantyAsync(int productId, Warranty? warranty)
     {
-        Product product = await GetAsync(productId);
+        Product product = await GetAsync(productId, true);
         product.Warranty = warranty;
     }
 
@@ -164,7 +174,7 @@ public sealed class ProductRepository : IProductRepository
     }
     public async Task AddImagesAsync(int productId, IFormFileCollection uploadedFiles, IImageRepository imageRepository)
     {
-        Product product = await GetAsync(productId, _db.Products.Include(p => p.Images));
+        Product product = await GetAsync(productId, _db.Products.Include(p => p.Images), true);
 #warning maybe .CreateImagesAsync(..., string -> method) ?
         IEnumerable<Image> images = await imageRepository.CreateImagesAsync(uploadedFiles, $"{Program.ProductDirectory}/{product.Id}");
 
@@ -172,7 +182,7 @@ public sealed class ProductRepository : IProductRepository
     }
     public async Task DeleteImagesAsync(int productId, IEnumerable<int> imagesId)
     {
-        Product product = await GetAsync(productId, _db.Products.Include(p => p.Images));
+        Product product = await GetAsync(productId, _db.Products.Include(p => p.Images), true);
 
         Dictionary<int, Image> dictionary = new(
             product.Images.Select(i => new KeyValuePair<int, Image>(i.Id, i)));
@@ -229,4 +239,5 @@ public sealed class ProductRepository : IProductRepository
             await _db.SaveChangesAsync();
         }
     }
+
 }

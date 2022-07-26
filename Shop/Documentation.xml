@@ -4,7 +4,7 @@
         <name>Shop</name>
     </assembly>
     <members>
-        <member name="M:Shop.Controllers.ProductController.GetProductViewAsync(System.Int32)">
+        <member name="M:Shop.Controllers.ProductController.GetProductAsync(System.Int32)">
             <summary>
             Get product
             </summary>
@@ -226,7 +226,7 @@
             <exception cref="T:Shop.Exceptions.UploadFileIsEmptyException"></exception>
             <exception cref="T:Shop.Exceptions.FileIsNotImageException"></exception>
         </member>
-        <member name="M:Shop.Repositories.Interfaces.IProductRepository.GetAsync(System.Int32)">
+        <member name="M:Shop.Repositories.Interfaces.IProductRepository.GetAsync(System.Int32,System.Boolean)">
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
             <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
         </member>

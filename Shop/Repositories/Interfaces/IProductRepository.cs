@@ -8,7 +8,7 @@ public interface IProductRepository
 {
     /// <exception cref="ProductNotFoundException"></exception>
     /// <exception cref="ProductIdNegativeException"></exception>
-    Task<Product> GetAsync(int productId);
+    Task<Product> GetAsync(int id, bool tracking = false);
 
     Task AddAsync(Product product, IProductTypeRepository productTypeRepository);
 

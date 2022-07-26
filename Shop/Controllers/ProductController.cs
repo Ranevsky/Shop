@@ -33,9 +33,9 @@ public sealed class ProductController : ControllerBase
     [ProducesResponseType(typeof(ProductView), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ProductView>> GetProductViewAsync(int id)
+    public async Task<ActionResult<ProductView>> GetProductAsync(int id)
     {
-        Product product = await _uow.Products.GetAsync(id);
+        Product product = await _uow.Products.GetAsync(id, true);
 
         product.Popularity++;
         await _uow.SaveAsync();
@@ -91,7 +91,7 @@ public sealed class ProductController : ControllerBase
         await _uow.SaveAsync();
 #warning change actionResult
         ProductView productView = _mapper.Map<ProductView>(product);
-        return base.CreatedAtAction("GetProductView", new { id = product.Id }, productView);
+        return base.CreatedAtAction("GetProduct", new { id = product.Id }, productView);
     }
 
     /// <summary>
