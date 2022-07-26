@@ -7,7 +7,7 @@ namespace Shop.Repositories.Interfaces;
 public interface IProductRepository
 {
     /// <exception cref="ProductNotFoundException"></exception>
-    Task<Product> FindAsync(int productId);
+    Task<Product> GetAsync(int productId);
     Task AddAsync(Product product, IProductTypeRepository productTypeRepository);
 
     /// <exception cref="ProductNotFoundException"></exception>
@@ -21,4 +21,10 @@ public interface IProductRepository
     /// <exception cref="ProductNotFoundException"></exception>
     /// <exception cref="ProductNotHaveImageException"></exception>
     Task DeleteImagesAsync(int productId, IEnumerable<int> imagesId);
+    /// <exception cref="ProductNotFoundException"></exception>
+    /// <exception cref="WarrantyIdNegativeException"></exception>
+    /// <exception cref="WarrantyNotFoundException"></exception>
+    Task SetWarrantyAsync(int productId, int warrantyId);
+    /// <exception cref="ProductNotFoundException"></exception>
+    Task SetWarrantyAsync(int productId, Warranty? warranty);
 }

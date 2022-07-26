@@ -34,7 +34,7 @@ namespace Shop.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Characteristics", (string)null);
+                    b.ToTable("Characteristics");
                 });
 
             modelBuilder.Entity("Shop.Models.Product.Description", b =>
@@ -49,7 +49,7 @@ namespace Shop.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Descriptions", (string)null);
+                    b.ToTable("Descriptions");
                 });
 
             modelBuilder.Entity("Shop.Models.Product.Image", b =>
@@ -73,7 +73,7 @@ namespace Shop.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Images", (string)null);
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Shop.Models.Product.Product", b =>
@@ -112,7 +112,7 @@ namespace Shop.Migrations
 
                     b.HasIndex("WarrantyId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Shop.Models.Product.ProductType", b =>
@@ -127,7 +127,7 @@ namespace Shop.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductTypes", (string)null);
+                    b.ToTable("ProductTypes");
                 });
 
             modelBuilder.Entity("Shop.Models.Product.Warranty", b =>
@@ -142,21 +142,27 @@ namespace Shop.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Warranties", (string)null);
+                    b.ToTable("Warranties");
                 });
 
             modelBuilder.Entity("Shop.Models.Product.Characteristic", b =>
                 {
-                    b.HasOne("Shop.Models.Product.Product", null)
+                    b.HasOne("Shop.Models.Product.Product", "Product")
                         .WithMany("Characteristics")
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Shop.Models.Product.Image", b =>
                 {
-                    b.HasOne("Shop.Models.Product.Product", null)
+                    b.HasOne("Shop.Models.Product.Product", "Product")
                         .WithMany("Images")
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Shop.Models.Product.Product", b =>
@@ -173,7 +179,8 @@ namespace Shop.Migrations
 
                     b.HasOne("Shop.Models.Product.Warranty", "Warranty")
                         .WithMany("Products")
-                        .HasForeignKey("WarrantyId");
+                        .HasForeignKey("WarrantyId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Description");
 

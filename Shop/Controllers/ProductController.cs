@@ -37,7 +37,7 @@ public sealed class ProductController : ControllerBase
         Product product;
         try
         {
-            product = await _uow.Products.FindAsync(id);
+            product = await _uow.Products.GetAsync(id);
         }
         catch (ActionResultException ex)
         {
@@ -179,6 +179,42 @@ public sealed class ProductController : ControllerBase
         try
         {
             await _uow.Products.DeleteImagesAsync(id, imagesId);
+        }
+        catch (ActionResultException ex)
+        {
+            return ex.ActionResult;
+        }
+
+        await _uow.SaveAsync();
+
+        return Ok();
+    }
+
+
+    /// <summary>
+    /// Set warranty for product
+    /// </summary>
+    /// <param name="productId">Product id</param>
+    /// <param name="warrantyId">Warranty id</param>
+    /// <response code="200">Success</response>
+    /// <response code="400">Bad Request</response>
+    /// <response code="404">Not Found</response>
+    [HttpPut("SetWarranty")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> SetWarrantyAsync(int productId, int? warrantyId)
+    {
+        try
+        {
+            if (warrantyId == null)
+            {
+                await _uow.Products.SetWarrantyAsync(productId, null);
+            }
+            else
+            {
+                await _uow.Products.SetWarrantyAsync(productId, (int)warrantyId);
+            }
         }
         catch (ActionResultException ex)
         {

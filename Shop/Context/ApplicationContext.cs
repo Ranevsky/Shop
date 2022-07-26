@@ -18,9 +18,25 @@ public sealed class ApplicationContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<ProductType>()
-            .HasMany(p => p.Products)
-            .WithOne(p => p.Type)
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Type)
+            .WithMany(p => p.Products)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Characteristic>()
+            .HasOne(c => c.Product)
+            .WithMany(p => p.Characteristics)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Image>()
+            .HasOne(i => i.Product)
+            .WithMany(p => p.Images)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Warranty>()
+            .HasMany(w => w.Products)
+            .WithOne(p => p.Warranty)
+            .OnDelete(DeleteBehavior.SetNull);
+
     }
 }

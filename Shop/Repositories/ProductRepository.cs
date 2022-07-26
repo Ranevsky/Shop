@@ -41,7 +41,7 @@ public sealed class ProductRepository : IProductRepository
         }
         await _db.Products.AddAsync(product);
     }
-    public async Task<Product> FindAsync(int id)
+    public async Task<Product> GetAsync(int id)
     {
         Product product = await FindAsync(id, GetAllInclusions());
 
@@ -51,10 +51,41 @@ public sealed class ProductRepository : IProductRepository
     }
     public async Task DeleteAsync(int id)
     {
-        Product product = await FindAsync(id);
+        Product product = await GetAsync(id);
 
         product.Delete();
+
+        if (product.Description != null)
+        {
+#warning May be change description delete
+            _db.Remove(product.Description);
+        }
+
         _db.Remove(product);
+    }
+    public async Task SetWarrantyAsync(int productId, int warrantyId)
+    {
+        Product product = await GetAsync(productId);
+
+#warning Make warranty repo
+
+        if (warrantyId < 1)
+        {
+            throw new WarrantyIdNegativeException(warrantyId.ToString());
+        }
+
+        Warranty? warranty = await _db.Warranties.FirstOrDefaultAsync(w => w.Id == warrantyId);
+        
+        if (warranty == null)
+        {
+            throw new WarrantyNotFoundException(warrantyId.ToString());
+        }
+        product.Warranty = warranty;
+    }
+    public async Task SetWarrantyAsync(int productId, Warranty? warranty)
+    {
+        Product product = await GetAsync(productId);
+        product.Warranty = warranty;
     }
 
     public async Task<IQueryable<Product>> SortAndFilterAsync(SortAndFilter model)

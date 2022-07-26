@@ -15,6 +15,8 @@ public sealed class Image : IDelete
 #warning create class
     public string Path { get; set; } = null!;
 
+    [JsonIgnore]
+    public Product? Product { get; set; }
 #warning Maybe not exist, get url (if IsExist)
     [JsonIgnore]
     private string FullPath => $"{Program.PathToImages}{Path}/{Name}";
