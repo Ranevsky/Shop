@@ -6,7 +6,7 @@ using Shop.Repositories.Interfaces;
 
 namespace Shop.Extensions;
 
-public static class ExstensionClass
+public static class ServiceExtension
 {
     public static IServiceCollection AddUnitOfWork(this IServiceCollection services)
     {

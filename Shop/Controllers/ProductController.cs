@@ -34,15 +34,7 @@ public sealed class ProductController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProductView>> GetProductViewAsync(int id)
     {
-        Product product;
-        try
-        {
-            product = await _uow.Products.GetAsync(id);
-        }
-        catch (ActionResultException ex)
-        {
-            return ex.ActionResult;
-        }
+        Product product = await _uow.Products.GetAsync(id);
 
         product.Popularity++;
         await _uow.SaveAsync();
@@ -63,15 +55,8 @@ public sealed class ProductController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<CatalogView>> PagingAsync([FromQuery] SortAndFilter sortAndFilter, [FromQuery] PagingModel paging)
     {
-        IQueryable<Product> productsQuery;
-        try
-        {
-            productsQuery = await _uow.Products.SortAndFilterAsync(sortAndFilter);
-        }
-        catch (ActionResultException ex)
-        {
-            return ex.ActionResult;
-        }
+        IQueryable<Product> productsQuery = await _uow.Products.SortAndFilterAsync(sortAndFilter);
+        
         CatalogView? catalog = new() { CountProducts = await productsQuery.LongCountAsync() };
 
         productsQuery = paging.Paging(productsQuery);
@@ -100,8 +85,8 @@ public sealed class ProductController : ControllerBase
         }
 
         Product product = _mapper.Map<Product>(productModel);
-
         await _uow.Products.AddAsync(product, _uow.ProductTypes);
+
         await _uow.SaveAsync();
 #warning change actionResult
         ProductView productView = _mapper.Map<ProductView>(product);
@@ -120,14 +105,7 @@ public sealed class ProductController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteProductAsync(int id)
     {
-        try
-        {
-            await _uow.Products.DeleteAsync(id);
-        }
-        catch (ActionResultException ex)
-        {
-            return ex.ActionResult;
-        }
+        await _uow.Products.DeleteAsync(id);
 
         await _uow.SaveAsync();
 
@@ -149,15 +127,8 @@ public sealed class ProductController : ControllerBase
     [HttpPost("AddImages")]
     public async Task<ActionResult> AddImagesAsync(int id, IFormFileCollection files)
     {
-        try
-        {
-            await _uow.Products.AddImagesAsync(id, files, _uow.Images);
-        }
-        catch (ActionResultException ex)
-        {
-            return ex.ActionResult;
-        }
-
+        await _uow.Products.AddImagesAsync(id, files, _uow.Images);
+        
         await _uow.SaveAsync();
 
         return Ok();
@@ -176,15 +147,8 @@ public sealed class ProductController : ControllerBase
     [HttpDelete("DeleteImage")]
     public async Task<ActionResult> DeleteImagesAsync(int id, IEnumerable<int> imagesId)
     {
-        try
-        {
-            await _uow.Products.DeleteImagesAsync(id, imagesId);
-        }
-        catch (ActionResultException ex)
-        {
-            return ex.ActionResult;
-        }
-
+        await _uow.Products.DeleteImagesAsync(id, imagesId);
+        
         await _uow.SaveAsync();
 
         return Ok();
@@ -205,20 +169,13 @@ public sealed class ProductController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> SetWarrantyAsync(int productId, int? warrantyId)
     {
-        try
+        if (warrantyId == null)
         {
-            if (warrantyId == null)
-            {
-                await _uow.Products.SetWarrantyAsync(productId, null);
-            }
-            else
-            {
-                await _uow.Products.SetWarrantyAsync(productId, (int)warrantyId);
-            }
+            await _uow.Products.SetWarrantyAsync(productId, null);
         }
-        catch (ActionResultException ex)
+        else
         {
-            return ex.ActionResult;
+            await _uow.Products.SetWarrantyAsync(productId, (int)warrantyId);
         }
 
         await _uow.SaveAsync();

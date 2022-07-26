@@ -28,15 +28,8 @@ public class ProductTypeController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<ProductType>), StatusCodes.Status200OK)]
     public ActionResult<IEnumerable<ProductType>> GetAllTypes()
     {
-        IEnumerable<ProductType> types;
-        try
-        {
-            types = _uow.ProductTypes.GetAll();
-        }
-        catch (ActionResultException ex)
-        {
-            return ex.ActionResult;
-        }
+        IEnumerable<ProductType> types = _uow.ProductTypes.GetAll();
+
         return Ok(types);
     }
 
@@ -53,14 +46,8 @@ public class ProductTypeController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel),StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteAsync(int id)
     {
-        try
-        {
-            await _uow.ProductTypes.DeleteAsync(id, _uow.Products);
-        }
-        catch (ActionResultException ex)
-        {
-            return ex.ActionResult;
-        }
+        await _uow.ProductTypes.DeleteAsync(id, _uow.Products);
+
         await _uow.SaveAsync();
 
         return Ok();
@@ -80,14 +67,8 @@ public class ProductTypeController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> ChangeNameAsync(int id, string newName)
     {
-        try
-        {
-            await _uow.ProductTypes.ChangeNameAsync(id, newName);
-        }
-        catch (ActionResultException ex)
-        {
-            return ex.ActionResult;
-        }
+        await _uow.ProductTypes.ChangeNameAsync(id, newName);
+
         await _uow.SaveAsync();
 
         return Ok();
@@ -106,15 +87,8 @@ public class ProductTypeController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProductType>> GetAsync(int id)
     {
-        ProductType type;
-        try
-        {
-            type = await _uow.ProductTypes.GetAsync(id);
-        }
-        catch (ActionResultException ex)
-        {
-            return ex.ActionResult;
-        }
+        ProductType type = await _uow.ProductTypes.GetAsync(id);
+
         return type;
     }
 
@@ -130,14 +104,7 @@ public class ProductTypeController : ControllerBase
     public async Task<ActionResult> AddAsync(ProductTypeAddModel type)
     {
         ProductType productType = _mapper.Map<ProductType>(type);
-        try
-        {
-            await _uow.ProductTypes.AddAsync(productType);
-        }
-        catch (ActionResultException ex)
-        {
-            return ex.ActionResult;
-        }
+        await _uow.ProductTypes.AddAsync(productType);
 
         await _uow.SaveAsync();
 
@@ -157,15 +124,7 @@ public class ProductTypeController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<int>> GetCountAsync(int id)
     {
-        int count;
-        try
-        {
-            count = await _uow.ProductTypes.GetCountAsync(id);
-        }
-        catch (ActionResultException ex)
-        {
-            return ex.ActionResult;
-        }
+        int count = await _uow.ProductTypes.GetCountAsync(id);
 
         return Ok(count);
     }

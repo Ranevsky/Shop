@@ -61,7 +61,7 @@ internal sealed class Program
         Configuration = builder.Configuration;
         GetPathToImages(builder.Environment.WebRootPath);
         GetApplicationUrl();
-        //return;
+
         // Services
 
         builder.Services.AddCors()
@@ -94,6 +94,7 @@ internal sealed class Program
         app.UseAuthorization();
         app.MapControllers();
         app.UseCors(builder => builder.AllowAnyOrigin());
+        app.UseActionResultException();
         app.Run();
     }
 }
