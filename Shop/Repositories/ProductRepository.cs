@@ -207,6 +207,32 @@ public sealed class ProductRepository : IProductRepository
             product.DeleteImage(dictionary[id]);
         }
     }
+    public async Task UpdateAsync(int id, ProductUpdateModel model)
+    {
+        Product product = await GetAsync(id, _db.Products, true);
+
+        if (model.Name != null)
+        {
+            product.Name = model.Name;
+        }
+
+        if (model.Price != null)
+        {
+            product.Price = (decimal)model.Price;
+        }
+
+        if (model.IsStock != null)
+        {
+            product.IsStock = (bool)model.IsStock;
+        }
+
+        if (model.Description != null)
+        {
+            product.Description = model.Description.Text == null
+                ? null
+                : new Description() { Text = model.Description.Text };
+        }
+    }
 
     private IQueryable<Product> GetAllInclusions()
     {

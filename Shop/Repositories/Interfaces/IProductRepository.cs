@@ -32,6 +32,10 @@ public interface IProductRepository
 
     /// <exception cref="ProductNotFoundException"></exception>
     /// <exception cref="ProductIdNegativeException"></exception>
+    Task UpdateAsync(int id, ProductUpdateModel model);
+
+    /// <exception cref="ProductNotFoundException"></exception>
+    /// <exception cref="ProductIdNegativeException"></exception>
     /// <exception cref="WarrantyIdNegativeException"></exception>
     /// <exception cref="WarrantyNotFoundException"></exception>
     Task SetWarrantyAsync(int productId, int warrantyId);

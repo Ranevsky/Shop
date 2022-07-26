@@ -98,7 +98,6 @@ public sealed class ProductController : ControllerBase
     /// Delete Product
     /// </summary>
     /// <param name="id">Product id</param>
-    /// <returns></returns>
     /// <response code="200">Success</response>
     /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
@@ -120,14 +119,13 @@ public sealed class ProductController : ControllerBase
     /// </summary>
     /// <param name="id">Product id</param>
     /// <param name="files">Image files</param>
-    /// <returns></returns>
     /// <response code="200">Success</response>
     /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
+    [HttpPost("AddImages")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
-    [HttpPost("AddImages")]
     public async Task<ActionResult> AddImagesAsync(int id, IFormFileCollection files)
     {
         await _uow.Products.AddImagesAsync(id, files, _uow.Images);
@@ -142,14 +140,13 @@ public sealed class ProductController : ControllerBase
     /// </summary>
     /// <param name="id">Product id</param>
     /// <param name="imagesId">Collection </param>
-    /// <returns></returns>
     /// <response code="200">Success</response>
     /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
+    [HttpDelete("DeleteImage")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
-    [HttpDelete("DeleteImage")]
     public async Task<ActionResult> DeleteImagesAsync(int id, IEnumerable<int> imagesId)
     {
         await _uow.Products.DeleteImagesAsync(id, imagesId);
@@ -185,5 +182,24 @@ public sealed class ProductController : ControllerBase
         await _uow.SaveAsync();
 
         return Ok();
+    }
+
+    /// <summary>
+    /// Update product
+    /// </summary>
+    /// <param name="id">Product id</param>
+    /// <param name="model">Model for Product</param>
+    /// <response code="200">Success</response>
+    /// <response code="400">Bad Request</response>
+    /// <response code="404">Product not found</response>
+    [HttpPut]
+    [ProducesResponseType(typeof(ProductView), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+    public async Task UpdateProductAsync(int id, ProductUpdateModel model)
+    {
+        await _uow.Products.UpdateAsync(id, model);
+
+        await _uow.SaveAsync();
     }
 }

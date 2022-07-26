@@ -35,7 +35,6 @@
             Delete Product
             </summary>
             <param name="id">Product id</param>
-            <returns></returns>
             <response code="200">Success</response>
             <response code="400">Bad Request</response>
             <response code="404">Not Found</response>
@@ -46,7 +45,6 @@
             </summary>
             <param name="id">Product id</param>
             <param name="files">Image files</param>
-            <returns></returns>
             <response code="200">Success</response>
             <response code="400">Bad Request</response>
             <response code="404">Not Found</response>
@@ -57,7 +55,6 @@
             </summary>
             <param name="id">Product id</param>
             <param name="imagesId">Collection </param>
-            <returns></returns>
             <response code="200">Success</response>
             <response code="400">Bad Request</response>
             <response code="404">Not Found</response>
@@ -71,6 +68,16 @@
             <response code="200">Success</response>
             <response code="400">Bad Request</response>
             <response code="404">Not Found</response>
+        </member>
+        <member name="M:Shop.Controllers.ProductController.UpdateProductAsync(System.Int32,Shop.Models.Product.ProductUpdateModel)">
+            <summary>
+            Update product
+            </summary>
+            <param name="id">Product id</param>
+            <param name="model">Model for Product</param>
+            <response code="200">Success</response>
+            <response code="400">Bad Request</response>
+            <response code="404">Product not found</response>
         </member>
         <member name="M:Shop.Controllers.ProductTypeController.GetAllTypes">
             <summary>
@@ -247,6 +254,10 @@
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
             <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
             <exception cref="T:Shop.Exceptions.ProductNotHaveImageException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IProductRepository.UpdateAsync(System.Int32,Shop.Models.Product.ProductUpdateModel)">
+            <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IProductRepository.SetWarrantyAsync(System.Int32,System.Int32)">
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
