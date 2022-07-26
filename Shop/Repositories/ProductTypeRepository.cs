@@ -125,11 +125,6 @@ public sealed class ProductTypeRepository : IProductTypeRepository
     private IQueryable<ProductType> GetQuery(bool tracking = false)
     {
         IQueryable<ProductType> query = _db.ProductTypes;
-        if (!tracking)
-        {
-            query = query.AsNoTracking();
-        }
-        return query;
-
+        return tracking ? query.AsTracking() : query.AsNoTracking();
     }
 }
