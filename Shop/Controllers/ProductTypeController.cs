@@ -118,14 +118,14 @@ public sealed class ProductTypeController : ControllerBase
     /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
     [HttpGet("Count")]
-    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProductTypeCountModel), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<int>> GetCountAsync(int id)
+    public async Task<ActionResult<ProductTypeCountModel>> GetCountAsync(int id)
     {
-        int count = await _uow.ProductTypes.GetCountAsync(id);
+        ProductTypeCountModel countModel = await _uow.ProductTypes.GetCountAsync(id);
 
-        return Ok(count);
+        return Ok(countModel);
     }
 
 }

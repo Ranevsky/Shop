@@ -33,9 +33,9 @@ public interface IProductTypeRepository
     Task AddNotExistAsync(ProductType type);
 
     /// <exception cref="ProductTypeNotFoundException"></exception>
-    Task<int> GetCountAsync(string name);
+    Task<ProductTypeCountModel> GetCountAsync(string name);
 
     /// <exception cref="ProductTypeIdNegativeException"></exception>
     /// <exception cref="ProductTypeNotFoundException"></exception>
-    Task<int> GetCountAsync(int id);
+    Task<ProductTypeCountModel> GetCountAsync(int id);
 }

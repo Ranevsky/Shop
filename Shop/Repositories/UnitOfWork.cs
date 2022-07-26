@@ -1,18 +1,23 @@
-﻿using Shop.Context;
+﻿using AutoMapper;
+
+using Shop.Context;
 using Shop.Repositories.Interfaces;
 
 namespace Shop.Repositories;
 
 public sealed class UnitOfWork : IUnitOfWork
 {
-    private readonly ApplicationContext db;
+    private readonly ApplicationContext _db;
+    private readonly IMapper _mapper;
+
     private IProductRepository productRepository = null!;
     private IImageRepository imageRepository = null!;
     private IProductTypeRepository productTypeRepository = null!;
 
-    public UnitOfWork(ApplicationContext db)
+    public UnitOfWork(ApplicationContext db, IMapper mapper)
     {
-        this.db = db ?? throw new ArgumentNullException(nameof(db));
+        _db = db;
+        _mapper = mapper;
     }
 
     public IProductRepository Products
@@ -21,7 +26,7 @@ public sealed class UnitOfWork : IUnitOfWork
         {
             if (productRepository == null)
             {
-                productRepository = new ProductRepository(db);
+                productRepository = new ProductRepository(_db);
             }
             return productRepository;
         }
@@ -32,7 +37,7 @@ public sealed class UnitOfWork : IUnitOfWork
         {
             if (imageRepository == null)
             {
-                imageRepository = new ImageRepository(db);
+                imageRepository = new ImageRepository(_db);
             }
             return imageRepository;
         }
@@ -43,7 +48,8 @@ public sealed class UnitOfWork : IUnitOfWork
         {
             if (productTypeRepository == null)
             {
-                productTypeRepository = new ProductTypeRepository(db);
+                productTypeRepository = new ProductTypeRepository(_db, _mapper);
+                ;
             }
             return productTypeRepository;
         }
@@ -51,7 +57,7 @@ public sealed class UnitOfWork : IUnitOfWork
 
     public async Task SaveAsync()
     {
-        await db.SaveChangesAsync();
+        await _db.SaveChangesAsync();
     }
 
     private bool disposed = false;
@@ -61,7 +67,7 @@ public sealed class UnitOfWork : IUnitOfWork
         {
             if (disposing)
             {
-                db.Dispose();
+                _db.Dispose();
             }
             disposed = true;
         }

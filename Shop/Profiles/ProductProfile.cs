@@ -80,6 +80,12 @@ public sealed class ProductProfile : Profile
 
         // ProductType
         CreateMap<ProductTypeAddModel, ProductType>();
+        CreateMap<ProductType, ProductTypeCountModel>()
+            .ForMember(countModel => countModel.Count, opt =>
+            {
+                opt.MapFrom(type => type.Products.Count);
+            });
+
     }
 
     public static string ImageGetUrl(Image image)

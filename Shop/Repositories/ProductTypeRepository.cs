@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+
+using Microsoft.EntityFrameworkCore;
 
 using Shop.Context;
 using Shop.Exceptions;
@@ -16,10 +18,12 @@ public sealed class ProductTypeRepository : IProductTypeRepository
     }
 
     private readonly ApplicationContext _db;
+    private readonly IMapper _mapper;
 
-    public ProductTypeRepository(ApplicationContext db)
+    public ProductTypeRepository(ApplicationContext db, IMapper mapper)
     {
         _db = db;
+        _mapper = mapper;
     }
 
     public bool TryGet(string typeName, out ProductType? type, bool tracking = true)
@@ -99,19 +103,23 @@ public sealed class ProductTypeRepository : IProductTypeRepository
 
         await _db.AddAsync(type);
     }
-    public async Task<int> GetCountAsync(string name)
+    public async Task<ProductTypeCountModel> GetCountAsync(string name)
     {
         ProductType type = await GetAsync(name, true);
         await _db.Entry(type).Collection(t => t.Products).LoadAsync();
 
-        return type.Products.Count;
+        ProductTypeCountModel countModel = _mapper.Map<ProductTypeCountModel>(type);
+
+        return countModel;
     }
-    public async Task<int> GetCountAsync(int id)
+    public async Task<ProductTypeCountModel> GetCountAsync(int id)
     {
         ProductType type = await GetAsync(id, true);
         await _db.Entry(type).Collection(t => t.Products).LoadAsync();
 
-        return type.Products.Count;
+        ProductTypeCountModel countModel = _mapper.Map<ProductTypeCountModel>(type);
+
+        return countModel;
     }
 
     private IQueryable<ProductType> GetQuery(bool tracking = false)
