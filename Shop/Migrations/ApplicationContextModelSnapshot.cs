@@ -34,7 +34,7 @@ namespace Shop.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Characteristics");
+                    b.ToTable("Characteristics", (string)null);
                 });
 
             modelBuilder.Entity("Shop.Models.Product.Description", b =>
@@ -49,7 +49,7 @@ namespace Shop.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Descriptions");
+                    b.ToTable("Descriptions", (string)null);
                 });
 
             modelBuilder.Entity("Shop.Models.Product.Image", b =>
@@ -73,7 +73,7 @@ namespace Shop.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Images");
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("Shop.Models.Product.Product", b =>
@@ -112,7 +112,7 @@ namespace Shop.Migrations
 
                     b.HasIndex("WarrantyId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Shop.Models.Product.ProductType", b =>
@@ -127,7 +127,7 @@ namespace Shop.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductTypes");
+                    b.ToTable("ProductTypes", (string)null);
                 });
 
             modelBuilder.Entity("Shop.Models.Product.Warranty", b =>
@@ -137,12 +137,15 @@ namespace Shop.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Warranties");
+                    b.ToTable("Warranties", (string)null);
                 });
 
             modelBuilder.Entity("Shop.Models.Product.Characteristic", b =>

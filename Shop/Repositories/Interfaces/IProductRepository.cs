@@ -38,7 +38,7 @@ public interface IProductRepository
     /// <exception cref="ProductIdNegativeException"></exception>
     /// <exception cref="WarrantyIdNegativeException"></exception>
     /// <exception cref="WarrantyNotFoundException"></exception>
-    Task SetWarrantyAsync(int productId, int warrantyId);
+    Task SetWarrantyAsync(int productId, int warrantyId, IWarrantyRepository warrantyRepository);
 
     /// <exception cref="ProductNotFoundException"></exception>
     /// <exception cref="ProductIdNegativeException"></exception>

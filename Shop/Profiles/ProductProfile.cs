@@ -15,10 +15,6 @@ public sealed class ProductProfile : Profile
             {
                 opt.MapFrom(p => p.Type.Name);
             })
-            .ForMember(p => p.Warranty, opt =>
-            {
-                opt.MapFrom(p => p.Warranty == null ? null : p.Warranty.Description);
-            })
             .ForMember(p => p.Description, opt =>
             {
                 opt.MapFrom(p => p.Description == null ? null : p.Description.Text);
@@ -33,6 +29,8 @@ public sealed class ProductProfile : Profile
             {
                 opt.MapFrom(image => ImageGetUrl(image));
             });
+
+        CreateMap<Warranty, ProductWarrantyView>();
 
         CreateMap<Image, string>()
             .ConvertUsing(image => ImageGetUrl(image));
@@ -85,7 +83,6 @@ public sealed class ProductProfile : Profile
             {
                 opt.MapFrom(type => type.Products.Count);
             });
-
     }
 
     public static string ImageGetUrl(Image image)

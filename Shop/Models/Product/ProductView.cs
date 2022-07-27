@@ -9,6 +9,6 @@ public sealed class ProductView
     public List<ImageProductView> Images { get; set; } = new();
     public string? Description { get; set; }
     public List<string> Characteristic { get; set; } = new();
-    public string? Warranty { get; set; }
+    public ProductWarrantyView? Warranty { get; set; }
     public bool IsStock { get; set; }
 }

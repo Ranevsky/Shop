@@ -69,7 +69,7 @@ internal sealed class Program
             {
                 opt.IncludeXmlComments(GetXmlCommentsPath());
             })
-            .AddAutoMapper(typeof(ProductProfile))
+            .AddAutoMapper(typeof(ProductProfile), typeof(WarrantyProfile))
             .AddUnitOfWork()
             .AddEndpointsApiExplorer()
             .AddApplicationContext()

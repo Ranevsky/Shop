@@ -10,9 +10,10 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly ApplicationContext _db;
     private readonly IMapper _mapper;
 
-    private IProductRepository productRepository = null!;
-    private IImageRepository imageRepository = null!;
-    private IProductTypeRepository productTypeRepository = null!;
+    private IProductRepository? productRepository;
+    private IImageRepository? imageRepository;
+    private IProductTypeRepository? productTypeRepository;
+    private IWarrantyRepository? WarrantyRepository;
 
     public UnitOfWork(ApplicationContext db, IMapper mapper)
     {
@@ -52,6 +53,18 @@ public sealed class UnitOfWork : IUnitOfWork
                 ;
             }
             return productTypeRepository;
+        }
+    }
+
+    public IWarrantyRepository Warranties
+    {
+        get
+        {
+            if (WarrantyRepository == null)
+            {
+                WarrantyRepository = new WarrantyRepository(_db, _mapper);
+            }
+            return WarrantyRepository;
         }
     }
 

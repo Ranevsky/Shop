@@ -64,7 +64,7 @@
             Set warranty for product
             </summary>
             <param name="productId">Product id</param>
-            <param name="warrantyId">Warranty id</param>
+            <param name="warrantyId">Warranty id<br></br>If warranty id is empty then <b>warranty = null</b></param>
             <response code="200">Success</response>
             <response code="400">Bad Request</response>
             <response code="404">Not Found</response>
@@ -129,6 +129,56 @@
             <response code="200">Success</response>
             <response code="400">Bad Request</response>
             <response code="404">Not Found</response>
+        </member>
+        <member name="M:Shop.Controllers.WarrantyController.GetAsync(System.Int32)">
+            <summary>
+            Get warranty
+            </summary>
+            <param name="id">Warranty id</param>
+            <response code="200">Success</response>
+            <response code="400">Bad Request</response>
+            <response code="404">Product not found</response>
+        </member>
+        <member name="M:Shop.Controllers.WarrantyController.GetAllAsync">
+            <summary>
+            Get all warranties
+            </summary>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:Shop.Controllers.WarrantyController.GetCountAsync(System.Int32)">
+            <summary>
+            Get count contains products in warranty
+            </summary>
+            <param name="id">Warranty id</param>
+            <response code="200">Success</response>
+            <response code="400">Bad Request</response>
+            <response code="404">Product not found</response>
+        </member>
+        <member name="M:Shop.Controllers.WarrantyController.AddAsync(Shop.Models.Product.WarrantyAddModel)">
+            <summary>
+            Add warranty
+            </summary>
+            <param name="warrantyModel">Model for warranty</param>
+            <response code="200">Success</response>
+        </member>
+        <member name="M:Shop.Controllers.WarrantyController.UpdateAsync(System.Int32,Shop.Models.Product.WarrantyUpdateModel)">
+            <summary>
+            Update warranty
+            </summary>
+            <param name="id">Warranty id</param>
+            <param name="model">Model for warranty</param>
+            <response code="200">Success</response>
+            <response code="400">Bad Request</response>
+            <response code="404">Product not found</response>
+        </member>
+        <member name="M:Shop.Controllers.WarrantyController.DeleteAsync(System.Int32)">
+            <summary>
+            Delete warranty
+            </summary>
+            <param name="id">Warranty id</param>
+            <response code="200">Success</response>
+            <response code="400">Bad Request</response>
+            <response code="404">Product not found</response>
         </member>
         <member name="P:Shop.Models.Catalog.PagingModel.Count">
             <summary>
@@ -259,7 +309,7 @@
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
             <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
         </member>
-        <member name="M:Shop.Repositories.Interfaces.IProductRepository.SetWarrantyAsync(System.Int32,System.Int32)">
+        <member name="M:Shop.Repositories.Interfaces.IProductRepository.SetWarrantyAsync(System.Int32,System.Int32,Shop.Repositories.Interfaces.IWarrantyRepository)">
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
             <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
             <exception cref="T:Shop.Exceptions.WarrantyIdNegativeException"></exception>
@@ -298,6 +348,22 @@
         <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.GetCountAsync(System.Int32)">
             <exception cref="T:Shop.Exceptions.ProductTypeIdNegativeException"></exception>
             <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IWarrantyRepository.GetAsync(System.Int32)">
+            <exception cref="!:WarrantyIdNegativeException"></exception>
+            <exception cref="!:WarrantyNotFoundException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IWarrantyRepository.GetCountAsync(System.Int32)">
+            <exception cref="!:WarrantyIdNegativeException"></exception>
+            <exception cref="!:WarrantyNotFoundException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IWarrantyRepository.UpdateAsync(System.Int32,Shop.Models.Product.WarrantyUpdateModel)">
+            <exception cref="!:WarrantyIdNegativeException"></exception>
+            <exception cref="!:WarrantyNotFoundException"></exception>
+        </member>
+        <member name="M:Shop.Repositories.Interfaces.IWarrantyRepository.DeleteAsync(System.Int32)">
+            <exception cref="!:WarrantyIdNegativeException"></exception>
+            <exception cref="!:WarrantyNotFoundException"></exception>
         </member>
     </members>
 </doc>

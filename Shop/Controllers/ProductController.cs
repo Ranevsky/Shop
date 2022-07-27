@@ -160,7 +160,7 @@ public sealed class ProductController : ControllerBase
     /// Set warranty for product
     /// </summary>
     /// <param name="productId">Product id</param>
-    /// <param name="warrantyId">Warranty id</param>
+    /// <param name="warrantyId">Warranty id<br></br>If warranty id is empty then <b>warranty = null</b></param>
     /// <response code="200">Success</response>
     /// <response code="400">Bad Request</response>
     /// <response code="404">Not Found</response>
@@ -176,7 +176,7 @@ public sealed class ProductController : ControllerBase
         }
         else
         {
-            await _uow.Products.SetWarrantyAsync(productId, (int)warrantyId);
+            await _uow.Products.SetWarrantyAsync(productId, (int)warrantyId, _uow.Warranties);
         }
 
         await _uow.SaveAsync();
@@ -193,7 +193,7 @@ public sealed class ProductController : ControllerBase
     /// <response code="400">Bad Request</response>
     /// <response code="404">Product not found</response>
     [HttpPut]
-    [ProducesResponseType(typeof(ProductView), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task UpdateProductAsync(int id, ProductUpdateModel model)
