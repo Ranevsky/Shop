@@ -1,4 +1,6 @@
-﻿namespace Shop.Models.Product;
+﻿using Shop.Constants;
+
+namespace Shop.Models.Product;
 
 public sealed class Product : IDelete
 {
@@ -42,8 +44,7 @@ public sealed class Product : IDelete
         img.Delete();
     }
 
-
-    private string FullPath => $"{Program.PathToImages}{Program.ProductDirectory}/{Id}";
+    private string FullPath => $"{PathConst.ImageFullPath}{PathConst.ProductPath}/{Id}";
     public bool IsExists => Directory.Exists(FullPath);
     public void Delete()
     {

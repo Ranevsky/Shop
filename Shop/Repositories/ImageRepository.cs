@@ -1,4 +1,5 @@
-﻿using Shop.Context;
+﻿using Shop.Constants;
+using Shop.Context;
 using Shop.Exceptions;
 using Shop.Models.Product;
 using Shop.Repositories.Interfaces;
@@ -39,7 +40,7 @@ public sealed class ImageRepository : IImageRepository
         }
         List<Image> images = new(uploadedFiles.Count);
 
-        string directoryPath = $"{Program.PathToImages}{pathImage}";
+        string directoryPath = $"{PathConst.ImageFullPath}{pathImage}";
         if (!Directory.Exists(directoryPath))
         {
             Directory.CreateDirectory(directoryPath);

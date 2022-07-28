@@ -2,6 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
+using Shop.Constants;
 using Shop.Context;
 using Shop.Exceptions;
 using Shop.Models.Catalog;
@@ -162,7 +163,7 @@ public sealed class ProductRepository : IProductRepository
     {
         Product product = await GetAsync(productId, _db.Products.Include(p => p.Images), true);
 #warning maybe .CreateImagesAsync(..., string -> method) ?
-        IEnumerable<Image> images = await imageRepository.CreateImagesAsync(uploadedFiles, $"{Program.ProductDirectory}/{product.Id}");
+        IEnumerable<Image> images = await imageRepository.CreateImagesAsync(uploadedFiles, $"{PathConst.ProductPath}/{product.Id}");
 
         product.Images.AddRange(images);
     }

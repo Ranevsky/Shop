@@ -12,11 +12,11 @@ public static class ServiceExtension
     {
         return services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
-    public static IServiceCollection AddApplicationContext(this IServiceCollection services)
+    public static IServiceCollection AddApplicationContext(this IServiceCollection services, IConfiguration configuration)
     {
         return services.AddDbContext<ApplicationContext>(option =>
                 {
-                    string connection = Program.Configuration.GetConnectionString("DefaultConnection");
+                    string connection = configuration.GetConnectionString("DefaultConnection");
                     option.UseSqlite(connection);
                 });
     }

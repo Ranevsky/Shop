@@ -4,6 +4,31 @@
         <name>Shop</name>
     </assembly>
     <members>
+        <member name="P:Shop.Constants.PathConst.ImagePath">
+            <summary>
+            Example: /images
+            </summary>
+        </member>
+        <member name="P:Shop.Constants.PathConst.ImageFullPath">
+            <summary>
+            Example: C:/.../wwwroot/images
+            </summary>
+        </member>
+        <member name="P:Shop.Constants.PathConst.ProductPath">
+            <summary>
+            Example: /products
+            </summary>
+        </member>
+        <member name="P:Shop.Constants.UrlConst.ApplicationUrl">
+            <summary>
+            Example: https://localhost:7287
+            </summary>
+        </member>
+        <member name="P:Shop.Constants.UrlConst.ImageUrl">
+            <summary>
+            Example: /image
+            </summary>
+        </member>
         <member name="M:Shop.Controllers.ProductController.GetProductAsync(System.Int32)">
             <summary>
             Get product
@@ -261,22 +286,12 @@
         </member>
         <member name="P:Shop.Models.Product.Image.Path">
             <summary>
-            Example: products/2
+            Example: 2
             </summary>
         </member>
         <member name="P:Shop.Models.Product.ProductTypeAddModel.Name">
             <summary>
             Product type name
-            </summary>
-        </member>
-        <member name="P:Shop.Program.PathToImages">
-            <summary>
-            Example: C:/.../wwwroot/images
-            </summary>
-        </member>
-        <member name="P:Shop.Program.ApplicationUrl">
-            <summary>
-            Example: https://localhost:7287
             </summary>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IImageRepository.CreateImagesAsync(Microsoft.AspNetCore.Http.IFormFileCollection,System.String)">

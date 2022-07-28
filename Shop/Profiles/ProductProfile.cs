@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 
+using Shop.Constants;
 using Shop.Models.Catalog;
 using Shop.Models.Product;
 
@@ -27,13 +28,10 @@ public sealed class ProductProfile : Profile
         CreateMap<Image, ImageProductView>()
             .ForMember(imageView => imageView.Url, opt =>
             {
-                opt.MapFrom(image => ImageGetUrl(image));
+                opt.MapFrom(image => ImageProductUrl(image));
             });
 
         CreateMap<Warranty, ProductWarrantyView>();
-
-        CreateMap<Image, string>()
-            .ConvertUsing(image => ImageGetUrl(image));
 
         CreateMap<Characteristic, string>()
             .ConvertUsing(p => p.Description);
@@ -46,7 +44,7 @@ public sealed class ProductProfile : Profile
              })
             .ForMember(ProductView => ProductView.Image, opt =>
             {
-                opt.MapFrom(product => product.Images.FirstOrDefault());
+                opt.MapFrom(product => ImageProductUrl(product.Images.FirstOrDefault()));
             });
 
         // ProductAddModel
@@ -85,8 +83,10 @@ public sealed class ProductProfile : Profile
             });
     }
 
-    public static string ImageGetUrl(Image image)
+    public static string? ImageProductUrl(Image? image)
     {
-        return $"{Program.ApplicationUrl}{Program.ImageUrl}{image.Path}/{image.Name}";
+        return image != null
+            ? $"{UrlConst.ApplicationUrl}{UrlConst.ImageUrl}{PathConst.ProductPath}/{image.Path}/{image.Name}"
+            : null;
     }
 }
