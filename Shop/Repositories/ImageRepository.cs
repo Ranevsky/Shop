@@ -61,7 +61,6 @@ public sealed class ImageRepository : IImageRepository
 
     private static async Task<Image> DownloadImageAsync(IFormFile uploadedFile, string FullPath, string nameImage, string pathImage)
     {
-        // сохраняем файл в папку Files в каталоге wwwroot
         using (FileStream? fileStream = new(FullPath, FileMode.Create))
         {
             await uploadedFile.CopyToAsync(fileStream);

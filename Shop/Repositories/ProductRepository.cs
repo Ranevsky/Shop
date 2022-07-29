@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 using Shop.Constants;
 using Shop.Context;
@@ -26,11 +24,6 @@ public sealed class ProductRepository : IProductRepository
     private static IQueryable<Product> GetQuery(IQueryable<Product> query, bool tracking = false)
     {
         return tracking ? query.AsTracking() : query.AsNoTracking();
-    }
-    private IQueryable<Product> GetQuery(bool tracking = false)
-    {
-        IQueryable<Product> query = _db.Products;
-        return GetQuery(query, tracking);
     }
 
     private readonly ApplicationContext _db;
@@ -91,7 +84,7 @@ public sealed class ProductRepository : IProductRepository
         #region Filters
         if (model.Type != null)
         {
-            ProductType? type = await _db.ProductTypes.FirstOrDefaultAsync(p => p.Name.ToUpper() == model.Type.ToUpper());
+            ProductType? type = await _db.ProductTypes.AsNoTracking().FirstOrDefaultAsync(p => p.Name.ToUpper() == model.Type.ToUpper());
 
             if (type == null)
             {
@@ -129,7 +122,7 @@ public sealed class ProductRepository : IProductRepository
         #region Sorts
         if (model.Sort != null)
         {
-            Expression<Func<Product, double>> expression;
+            System.Linq.Expressions.Expression<Func<Product, double>> expression;
 
             switch (model.Sort.Type)
             {

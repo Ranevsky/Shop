@@ -74,8 +74,7 @@ public sealed class ProductTypeRepository : IProductTypeRepository
             throw new ProductTypeIdNegativeException(id.ToString());
         }
 
-        ProductType? type = await GetQuery(true)
-                                    .Include(t => t.Products)
+        ProductType? type = await GetQuery(_db.ProductTypes.Include(t => t.Products), true)
                                     .FirstOrDefaultAsync(t => t.Id == id);
         if (type == null)
         {
@@ -106,25 +105,33 @@ public sealed class ProductTypeRepository : IProductTypeRepository
     public async Task<ProductTypeCountModel> GetCountAsync(string name)
     {
         ProductType type = await GetAsync(name, true);
-        await _db.Entry(type).Collection(t => t.Products).LoadAsync();
-
-        ProductTypeCountModel countModel = _mapper.Map<ProductTypeCountModel>(type);
-
+        ProductTypeCountModel countModel = await GetCountAsync(type);
         return countModel;
     }
     public async Task<ProductTypeCountModel> GetCountAsync(int id)
     {
         ProductType type = await GetAsync(id, true);
+        ProductTypeCountModel countModel = await GetCountAsync(type);
+        return countModel;
+    }
+
+    private async Task<ProductTypeCountModel> GetCountAsync(ProductType type)
+    {
         await _db.Entry(type).Collection(t => t.Products).LoadAsync();
 
         ProductTypeCountModel countModel = _mapper.Map<ProductTypeCountModel>(type);
 
         return countModel;
     }
-
+    private static IQueryable<ProductType> GetQuery(IQueryable<ProductType> query, bool tracking = false)
+    {
+        return tracking
+            ? query.AsTracking()
+            : query.AsNoTracking();
+    }
     private IQueryable<ProductType> GetQuery(bool tracking = false)
     {
         IQueryable<ProductType> query = _db.ProductTypes;
-        return tracking ? query.AsTracking() : query.AsNoTracking();
+        return GetQuery(query);
     }
 }

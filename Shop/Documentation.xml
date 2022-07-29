@@ -365,20 +365,20 @@
             <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IWarrantyRepository.GetAsync(System.Int32)">
-            <exception cref="!:WarrantyIdNegativeException"></exception>
-            <exception cref="!:WarrantyNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.WarrantyIdNegativeException"></exception>
+            <exception cref="T:Shop.Exceptions.WarrantyNotFoundException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IWarrantyRepository.GetCountAsync(System.Int32)">
-            <exception cref="!:WarrantyIdNegativeException"></exception>
-            <exception cref="!:WarrantyNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.WarrantyIdNegativeException"></exception>
+            <exception cref="T:Shop.Exceptions.WarrantyNotFoundException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IWarrantyRepository.UpdateAsync(System.Int32,Shop.Models.Product.WarrantyUpdateModel)">
-            <exception cref="!:WarrantyIdNegativeException"></exception>
-            <exception cref="!:WarrantyNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.WarrantyIdNegativeException"></exception>
+            <exception cref="T:Shop.Exceptions.WarrantyNotFoundException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IWarrantyRepository.DeleteAsync(System.Int32)">
-            <exception cref="!:WarrantyIdNegativeException"></exception>
-            <exception cref="!:WarrantyNotFoundException"></exception>
+            <exception cref="T:Shop.Exceptions.WarrantyIdNegativeException"></exception>
+            <exception cref="T:Shop.Exceptions.WarrantyNotFoundException"></exception>
         </member>
     </members>
 </doc>
