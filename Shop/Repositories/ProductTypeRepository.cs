@@ -25,7 +25,7 @@ public sealed class ProductTypeRepository : IProductTypeRepository
         ProductType? type = await GetQuery(tracking)
                                     .FirstOrDefaultAsync(t => t.Id == id);
 
-        ProductTypeIsNotNull(type, id.ToString());
+        ProductTypeIsNotNull(type, id);
 
         return type!;
     }
@@ -65,7 +65,7 @@ public sealed class ProductTypeRepository : IProductTypeRepository
         ProductType? type = await GetQuery(GetProductInclusions(), true)
                                     .FirstOrDefaultAsync(t => t.Id == id);
 
-        ProductTypeIsNotNull(type, id.ToString());
+        ProductTypeIsNotNull(type, id);
 
         foreach (Product? product in type!.Products)
         {
@@ -98,7 +98,7 @@ public sealed class ProductTypeRepository : IProductTypeRepository
             })
             .FirstOrDefaultAsync(t => t.Id == id);
 
-        ProductTypeIsNotNull(countModel, id.ToString());
+        ProductTypeIsNotNull(countModel, id);
 
         return countModel!;
     }
@@ -137,10 +137,10 @@ public sealed class ProductTypeRepository : IProductTypeRepository
     {
         if (id < 1)
         {
-            throw new ProductTypeIdNegativeException(id.ToString());
+            throw new ProductTypeIdNegativeException(id);
         }
     }
-    private static void ProductTypeIsNotNull(object? obj, string id)
+    private static void ProductTypeIsNotNull(object? obj, int id)
     {
         if (obj == null)
         {

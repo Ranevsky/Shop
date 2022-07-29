@@ -33,7 +33,7 @@ public sealed class WarrantyRepository : IWarrantyRepository
             })
             .FirstOrDefaultAsync(w => w.Id == id);
 
-        WarrantyIsNotNull(countModel, id.ToString());
+        WarrantyIsNotNull(countModel, id);
 
         return countModel!;
     }
@@ -77,7 +77,7 @@ public sealed class WarrantyRepository : IWarrantyRepository
         Warranty? warranty = await GetQuery(queryInclusions, tracking)
             .FirstOrDefaultAsync(p => p.Id == id);
 
-        WarrantyIsNotNull(warranty, id.ToString());
+        WarrantyIsNotNull(warranty, id);
 
         return warranty!;
     }
@@ -108,10 +108,10 @@ public sealed class WarrantyRepository : IWarrantyRepository
     {
         if (id < 1)
         {
-            throw new WarrantyIdNegativeException(id.ToString());
+            throw new WarrantyIdNegativeException(id);
         }
     }
-    private static void WarrantyIsNotNull(object? obj, string id)
+    private static void WarrantyIsNotNull(object? obj, int id)
     {
         if (obj == null)
         {

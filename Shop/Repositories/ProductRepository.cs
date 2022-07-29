@@ -145,23 +145,23 @@ public sealed class ProductRepository : IProductRepository
             product.Images.Select(i => new KeyValuePair<int, Image>(i.Id, i)));
 
         // Validation
-        foreach (int id in imagesId)
+        foreach (int imageId in imagesId)
         {
-            if (id < 1)
+            if (imageId < 1)
             {
-                throw new ImageIdNegativeException(id.ToString());
+                throw new ImageIdNegativeException(imageId);
             }
 
-            if (!dictionary.ContainsKey(id))
+            if (!dictionary.ContainsKey(imageId))
             {
-                throw new ProductNotHaveImageException(productId.ToString(), id.ToString());
+                throw new ProductNotHaveImageException(productId, imageId);
             }
         }
 
         // Delete all images in array
-        foreach (int id in imagesId)
+        foreach (int imageId in imagesId)
         {
-            product.DeleteImage(dictionary[id]);
+            product.DeleteImage(dictionary[imageId]);
         }
     }
     public async Task UpdateAsync(int id, ProductUpdateModel model)
@@ -212,11 +212,11 @@ public sealed class ProductRepository : IProductRepository
     {
         if (id < 1)
         {
-            throw new ProductIdNegativeException(id.ToString());
+            throw new ProductIdNegativeException(id);
         }
         Product? product = await GetQuery(queryInclusions, tracking).FirstOrDefaultAsync(p => p.Id == id);
 
-        return product ?? throw new ProductNotFoundException(id.ToString());
+        return product ?? throw new ProductNotFoundException(id);
     }
     private static IQueryable<Product> GetQuery(IQueryable<Product> query, bool tracking = false)
     {

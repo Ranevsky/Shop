@@ -7,7 +7,7 @@ public sealed class WarrantyNotFoundException : NotFoundException
     {
 
     }
-    public WarrantyNotFoundException(string id)
+    public WarrantyNotFoundException(int id)
         : base($"Warranty with id = '{id}' not found")
     {
 

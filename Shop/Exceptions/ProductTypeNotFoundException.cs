@@ -7,7 +7,7 @@ public sealed class ProductTypeNotFoundException : NotFoundException
     {
 
     }
-    public ProductTypeNotFoundException(string id)
+    public ProductTypeNotFoundException(int id)
         : base($"Product type with id = '{id}' not found")
     {
 

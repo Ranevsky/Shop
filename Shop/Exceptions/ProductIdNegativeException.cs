@@ -2,7 +2,7 @@
 
 public sealed class ProductIdNegativeException : IdNegativeException
 {
-    public ProductIdNegativeException(string id)
+    public ProductIdNegativeException(int id)
         : base($"Product with id = '{id}', can not be negative")
     {
 
