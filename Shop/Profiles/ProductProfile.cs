@@ -10,7 +10,7 @@ public sealed class ProductProfile : Profile
 {
     public ProductProfile()
     {
-        // Product
+        // ProductView
         CreateMap<Product, ProductView>()
             .ForMember(p => p.ProductType, opt =>
             {
@@ -36,7 +36,7 @@ public sealed class ProductProfile : Profile
         CreateMap<Characteristic, string>()
             .ConvertUsing(p => p.Description);
 
-
+        // ProductInCatalogView
         CreateMap<Product, ProductInCatalogView>()
             .ForMember(productView => productView.ProductType, opt =>
              {
@@ -72,14 +72,6 @@ public sealed class ProductProfile : Profile
             .ForMember(w => w.Description, opt =>
             {
                 opt.MapFrom(s => s);
-            });
-
-        // ProductType
-        CreateMap<ProductTypeAddModel, ProductType>();
-        CreateMap<ProductType, ProductTypeCountModel>()
-            .ForMember(countModel => countModel.Count, opt =>
-            {
-                opt.MapFrom(type => type.Products.Count);
             });
     }
 

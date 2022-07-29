@@ -2,7 +2,6 @@ using Microsoft.Extensions.FileProviders;
 
 using Shop.Constants;
 using Shop.Extensions;
-using Shop.Profiles;
 
 namespace Shop;
 
@@ -21,7 +20,7 @@ internal sealed class Program
             {
                 opt.IncludeXmlComments($"{Directory.GetCurrentDirectory()}/Documentation.XML");
             })
-            .AddAutoMapper(typeof(ProductProfile), typeof(WarrantyProfile))
+            .AddAutoMapper()
             .AddUnitOfWork()
             .AddEndpointsApiExplorer()
             .AddApplicationContext(builder.Configuration)

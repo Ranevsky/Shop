@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using Shop.Context;
+using Shop.Profiles;
 using Shop.Repositories;
 using Shop.Repositories.Interfaces;
 
@@ -20,6 +21,15 @@ public static class ServiceExtension
                     option.UseSqlite(connection);
                 });
     }
+    public static IServiceCollection AddAutoMapper(this IServiceCollection services)
+    {
+        Type[] profiles = new Type[]
+        {
+            typeof(ProductProfile),
+            typeof(WarrantyProfile),
+            typeof(ProductTypeProfile)
+        };
 
-
+        return services.AddAutoMapper(profiles);
+    }
 }
