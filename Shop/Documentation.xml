@@ -294,6 +294,16 @@
             Product type name
             </summary>
         </member>
+        <member name="T:Shop.Models.Product.ProductTypeCountModel">
+            <summary>
+            <b>Warning:</b> Not supported AutoMapper
+            </summary>
+        </member>
+        <member name="T:Shop.Models.Product.WarrantyCountModel">
+            <summary>
+            <b>Warning:</b> Not supported AutoMapper
+            </summary>
+        </member>
         <member name="M:Shop.Repositories.Interfaces.IImageRepository.CreateImagesAsync(Microsoft.AspNetCore.Http.IFormFileCollection,System.String)">
             <exception cref="T:Shop.Exceptions.UploadFileIsEmptyException"></exception>
             <exception cref="T:Shop.Exceptions.FileIsNotImageException"></exception>
@@ -306,7 +316,7 @@
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
             <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
         </member>
-        <member name="M:Shop.Repositories.Interfaces.IProductRepository.SortAndFilterAsync(Shop.Models.Catalog.SortAndFilter)">
+        <member name="M:Shop.Repositories.Interfaces.IProductRepository.SortAndFilterAsync(Shop.Models.Catalog.SortAndFilter,System.Boolean)">
             <exception cref="T:Shop.Exceptions.BadRequestException"></exception>
         </member>
         <member name="M:Shop.Repositories.Interfaces.IProductRepository.AddImagesAsync(System.Int32,Microsoft.AspNetCore.Http.IFormFileCollection,Shop.Repositories.Interfaces.IImageRepository)">
@@ -338,9 +348,6 @@
             <exception cref="T:Shop.Exceptions.ProductTypeIsExistException"></exception>
             <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
         </member>
-        <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.GetAsync(System.String,System.Boolean)">
-            <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
-        </member>
         <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.GetAsync(System.Int32,System.Boolean)">
             <exception cref="T:Shop.Exceptions.ProductTypeIdNegativeException"></exception>
             <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
@@ -357,14 +364,11 @@
             Don't use, if you are not sure of existing
             </summary>
         </member>
-        <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.GetCountAsync(System.String)">
-            <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
-        </member>
         <member name="M:Shop.Repositories.Interfaces.IProductTypeRepository.GetCountAsync(System.Int32)">
             <exception cref="T:Shop.Exceptions.ProductTypeIdNegativeException"></exception>
             <exception cref="T:Shop.Exceptions.ProductTypeNotFoundException"></exception>
         </member>
-        <member name="M:Shop.Repositories.Interfaces.IWarrantyRepository.GetAsync(System.Int32)">
+        <member name="M:Shop.Repositories.Interfaces.IWarrantyRepository.GetAsync(System.Int32,System.Boolean)">
             <exception cref="T:Shop.Exceptions.WarrantyIdNegativeException"></exception>
             <exception cref="T:Shop.Exceptions.WarrantyNotFoundException"></exception>
         </member>

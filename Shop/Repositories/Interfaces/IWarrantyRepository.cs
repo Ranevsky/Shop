@@ -7,7 +7,7 @@ public interface IWarrantyRepository
 {
     /// <exception cref="WarrantyIdNegativeException"></exception>
     /// <exception cref="WarrantyNotFoundException"></exception>
-    Task<Warranty> GetAsync(int id);
+    Task<Warranty> GetAsync(int id, bool tracking = false);
 
     /// <exception cref="WarrantyIdNegativeException"></exception>
     /// <exception cref="WarrantyNotFoundException"></exception>

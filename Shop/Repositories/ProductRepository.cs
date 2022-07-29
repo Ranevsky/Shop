@@ -11,22 +11,8 @@ namespace Shop.Repositories;
 
 public sealed class ProductRepository : IProductRepository
 {
-    private static async Task<Product> GetAsync(int id, IQueryable<Product> queryInclusions, bool tracking = false)
-    {
-        if (id < 1)
-        {
-            throw new ProductIdNegativeException(id.ToString());
-        }
-        Product? product = await GetQuery(queryInclusions, tracking).FirstOrDefaultAsync(p => p.Id == id);
-
-        return product ?? throw new ProductNotFoundException(id.ToString());
-    }
-    private static IQueryable<Product> GetQuery(IQueryable<Product> query, bool tracking = false)
-    {
-        return tracking ? query.AsTracking() : query.AsNoTracking();
-    }
-
     private readonly ApplicationContext _db;
+
     public ProductRepository(ApplicationContext db)
     {
         _db = db;
@@ -68,55 +54,58 @@ public sealed class ProductRepository : IProductRepository
     }
     public async Task SetWarrantyAsync(int productId, int warrantyId, IWarrantyRepository warrantyRepository)
     {
-        Product product = await GetAsync(productId, true);
-        Warranty warranty = await warrantyRepository.GetAsync(warrantyId);
+        Warranty warranty = await warrantyRepository.GetAsync(warrantyId, false);
 
-        product.Warranty = warranty;
+        await SetWarrantyAsync(productId, warranty);
     }
     public async Task SetWarrantyAsync(int productId, Warranty? warranty)
     {
         Product product = await GetAsync(productId, true);
+
         product.Warranty = warranty;
     }
-    public async Task<IQueryable<Product>> SortAndFilterAsync(SortAndFilter model)
+    public async Task<IQueryable<Product>> SortAndFilterAsync(SortAndFilter model, bool tracking = false)
     {
-        IQueryable<Product>? productsQury = GetCatalogInclusions();
+        IQueryable<Product> query = GetQuery(GetCatalogInclusions(), tracking);
         #region Filters
         if (model.Type != null)
         {
-            ProductType? type = await _db.ProductTypes.AsNoTracking().FirstOrDefaultAsync(p => p.Name.ToUpper() == model.Type.ToUpper());
+            string? typeName = await _db.ProductTypes
+                                        .AsNoTracking()
+                                        .Select(t => t.Name)
+                                        .FirstOrDefaultAsync(p => p.ToUpper() == model.Type.ToUpper());
 
-            if (type == null)
+            if (typeName == null)
             {
                 throw new BadRequestException("Product type is not found");
             }
-            productsQury = productsQury.Where(p => p.Type.Name == type.Name);
+            query = query.Where(p => p.Type.Name == typeName);
         }
 
         if (model.PriceFilter != null)
         {
             if (model.PriceFilter.More != null)
             {
-                productsQury = productsQury.Where(p => p.Price > model.PriceFilter.More);
+                query = query.Where(p => p.Price > model.PriceFilter.More);
             }
             if (model.PriceFilter.Less != null)
             {
-                productsQury = productsQury.Where(p => p.Price < model.PriceFilter.Less);
+                query = query.Where(p => p.Price < model.PriceFilter.Less);
             }
         }
 
         if (model.Warranty != null)
         {
-            productsQury = model.Warranty == true ?
-                productsQury.Where(p => p.Warranty != null) :
-                productsQury.Where(p => p.Warranty == null);
+            query = model.Warranty == true
+                ? query.Where(p => p.Warranty != null)
+                : query.Where(p => p.Warranty == null);
         }
 
         if (model.IsStock != null)
         {
-            productsQury = model.IsStock == true ?
-                productsQury.Where(p => p.IsStock == true) :
-                productsQury.Where(p => p.IsStock == false);
+            query = model.IsStock == true
+                ? query.Where(p => p.IsStock == true)
+                : query.Where(p => p.IsStock == false);
         }
         #endregion
         #region Sorts
@@ -124,37 +113,25 @@ public sealed class ProductRepository : IProductRepository
         {
             System.Linq.Expressions.Expression<Func<Product, double>> expression;
 
-            switch (model.Sort.Type)
+            expression = model.Sort.Type switch
             {
-                case SortModel.TypeSort.Popularity:
-                {
-                    expression = p => p.Popularity;
-                    break;
-                }
+                SortModel.TypeSort.Popularity => p => p.Popularity,
+                SortModel.TypeSort.Price => p => (double)p.Price,
+                _ => throw new BadRequestException("Sort type is not found")
+            };
 
-                case SortModel.TypeSort.Price:
-                {
-                    expression = p => (double)p.Price;
-                    break;
-                }
-
-                default:
-                {
-                    throw new BadRequestException("Sort type is not found");
-                }
-            }
-
-            productsQury = model.Sort.SortAsc == true
-                ? productsQury.OrderBy(expression)
-                : productsQury.OrderByDescending(expression);
+            query = model.Sort.SortAsc == true
+                ? query.OrderBy(expression)
+                : query.OrderByDescending(expression);
         }
         #endregion
 
-        return productsQury;
+        return query;
     }
     public async Task AddImagesAsync(int productId, IFormFileCollection uploadedFiles, IImageRepository imageRepository)
     {
-        Product product = await GetAsync(productId, _db.Products.Include(p => p.Images), true);
+        Product product = await GetAsync(productId, GetImageInclusions(), true);
+
 #warning maybe .CreateImagesAsync(..., string -> method) ?
         IEnumerable<Image> images = await imageRepository.CreateImagesAsync(uploadedFiles, $"{PathConst.ProductPath}/{product.Id}");
 
@@ -162,7 +139,7 @@ public sealed class ProductRepository : IProductRepository
     }
     public async Task DeleteImagesAsync(int productId, IEnumerable<int> imagesId)
     {
-        Product product = await GetAsync(productId, _db.Products.Include(p => p.Images), true);
+        Product product = await GetAsync(productId, GetImageInclusions(), true);
 
         Dictionary<int, Image> dictionary = new(
             product.Images.Select(i => new KeyValuePair<int, Image>(i.Id, i)));
@@ -214,22 +191,6 @@ public sealed class ProductRepository : IProductRepository
         }
     }
 
-    private IQueryable<Product> GetAllInclusions()
-    {
-        return _db.Products
-            //.AsSplitQuery() // If there is a very large duplicate database
-            .Include(p => p.Description)
-            .Include(p => p.Characteristics)
-            .Include(p => p.Images)
-            .Include(p => p.Type)
-            .Include(p => p.Warranty);
-    }
-    private IQueryable<Product> GetCatalogInclusions()
-    {
-        return _db.Products
-            .Include(p => p.Type)
-            .Include(p => p.Images.Take(1));
-    }
     private async Task CheckingImageExistsAsync(params Product[] products)
     {
         bool isChange = false;
@@ -246,4 +207,40 @@ public sealed class ProductRepository : IProductRepository
         }
     }
 
+    // Queries
+    private static async Task<Product> GetAsync(int id, IQueryable<Product> queryInclusions, bool tracking = false)
+    {
+        if (id < 1)
+        {
+            throw new ProductIdNegativeException(id.ToString());
+        }
+        Product? product = await GetQuery(queryInclusions, tracking).FirstOrDefaultAsync(p => p.Id == id);
+
+        return product ?? throw new ProductNotFoundException(id.ToString());
+    }
+    private static IQueryable<Product> GetQuery(IQueryable<Product> query, bool tracking = false)
+    {
+        return tracking ? query.AsTracking() : query.AsNoTracking();
+    }
+    private IQueryable<Product> GetAllInclusions()
+    {
+        return _db.Products
+            //.AsSplitQuery() // If there is a very large duplicate database
+            .Include(p => p.Description)
+            .Include(p => p.Characteristics)
+            .Include(p => p.Images)
+            .Include(p => p.Type)
+            .Include(p => p.Warranty);
+    }
+    private IQueryable<Product> GetCatalogInclusions()
+    {
+        return _db.Products
+            .Include(p => p.Type)
+            .Include(p => p.Images.Take(1));
+    }
+    private IQueryable<Product> GetImageInclusions()
+    {
+        return _db.Products
+            .Include(p => p.Images);
+    }
 }

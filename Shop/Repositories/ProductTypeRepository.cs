@@ -1,10 +1,9 @@
-﻿using AutoMapper;
+﻿using System.Text;
 
 using Microsoft.EntityFrameworkCore;
 
 using Shop.Context;
 using Shop.Exceptions;
-using Shop.Extensions;
 using Shop.Models.Product;
 using Shop.Repositories.Interfaces;
 
@@ -12,86 +11,42 @@ namespace Shop.Repositories;
 
 public sealed class ProductTypeRepository : IProductTypeRepository
 {
-    private static void NormalFormat(ProductType type)
-    {
-        type.Name = type.Name.NormalFormat();
-    }
-
     private readonly ApplicationContext _db;
-    private readonly IMapper _mapper;
 
-    public ProductTypeRepository(ApplicationContext db, IMapper mapper)
+    public ProductTypeRepository(ApplicationContext db)
     {
         _db = db;
-        _mapper = mapper;
     }
 
-    public bool TryGet(string typeName, out ProductType? type, bool tracking = true)
-    {
-        ProductType? typeInDb = GetQuery(tracking).FirstOrDefault(t => t.Name.ToUpper() == typeName.ToUpper());
-        type = typeInDb;
-
-        return typeInDb != null;
-    }
-    public async Task ChangeNameAsync(int id, string newName)
-    {
-        if (TryGet(newName, out ProductType? typeInDb, false))
-        {
-            throw new ProductTypeIsExistException(typeInDb!);
-        }
-
-        ProductType type = await GetAsync(id, true);
-
-        type.Name = newName;
-        NormalFormat(type);
-    }
-    public async Task<ProductType> GetAsync(string name, bool tracking = false)
-    {
-        ProductType? type = await GetQuery(tracking).FirstOrDefaultAsync(t => t.Name == name);
-        return type ?? throw new ProductTypeNotFoundException();
-    }
     public async Task<ProductType> GetAsync(int id, bool tracking = false)
     {
-        if (id < 1)
-        {
-            throw new ProductTypeIdNegativeException(id.ToString());
-        }
+        IdIsNotNegative(id);
 
-        ProductType? type = await GetQuery(tracking).FirstOrDefaultAsync(t => t.Id == id);
+        ProductType? type = await GetQuery(tracking)
+                                    .FirstOrDefaultAsync(t => t.Id == id);
 
-        return type ?? throw new ProductTypeNotFoundException(id.ToString());
+        ProductTypeIsNotNull(type, id.ToString());
+
+        return type!;
+    }
+    public bool TryGet(string typeName, out ProductType? type, bool tracking = true)
+    {
+        ProductType? typeInDb = GetQuery(tracking)
+                                .FirstOrDefault(t => t.Name.ToUpper() == typeName.ToUpper());
+
+        type = typeInDb;
+
+        return type != null;
     }
     public IEnumerable<ProductType> GetAll()
     {
         return GetQuery(false);
     }
-
-    public async Task DeleteAsync(int id, IProductRepository productRepository)
-    {
-#warning Look in Delete Product Type
-        if (id < 1)
-        {
-            throw new ProductTypeIdNegativeException(id.ToString());
-        }
-
-        ProductType? type = await GetQuery(_db.ProductTypes.Include(t => t.Products), true)
-                                    .FirstOrDefaultAsync(t => t.Id == id);
-        if (type == null)
-        {
-            throw new ProductTypeNotFoundException(id.ToString());
-        }
-
-        foreach (Product? product in type.Products)
-        {
-            await productRepository.DeleteAsync(product.Id);
-        }
-        _db.Remove(type);
-    }
     public async Task AddAsync(ProductType type)
     {
         if (TryGet(type.Name, out ProductType? typeInDb, false))
         {
-            throw new ProductTypeIsExistException(typeInDb!);
+            ProductTypeIsNull(typeInDb!);
         }
 
         await AddNotExistAsync(type);
@@ -102,27 +57,61 @@ public sealed class ProductTypeRepository : IProductTypeRepository
 
         await _db.AddAsync(type);
     }
-    public async Task<ProductTypeCountModel> GetCountAsync(string name)
+    public async Task DeleteAsync(int id, IProductRepository productRepository)
     {
-        ProductType type = await GetAsync(name, true);
-        ProductTypeCountModel countModel = await GetCountAsync(type);
-        return countModel;
+#warning Look in Delete Product Type
+        IdIsNotNegative(id);
+
+        ProductType? type = await GetQuery(GetProductInclusions(), true)
+                                    .FirstOrDefaultAsync(t => t.Id == id);
+
+        ProductTypeIsNotNull(type, id.ToString());
+
+        foreach (Product? product in type!.Products)
+        {
+            await productRepository.DeleteAsync(product.Id);
+        }
+        _db.Remove(type);
+    }
+    public async Task ChangeNameAsync(int id, string newName)
+    {
+        if (TryGet(newName, out ProductType? typeInDb, false))
+        {
+            ProductTypeIsNull(typeInDb!);
+        }
+
+        ProductType type = await GetAsync(id, true);
+
+        type.Name = newName;
+        NormalFormat(type);
     }
     public async Task<ProductTypeCountModel> GetCountAsync(int id)
     {
-        ProductType type = await GetAsync(id, true);
-        ProductTypeCountModel countModel = await GetCountAsync(type);
-        return countModel;
+        IdIsNotNegative(id);
+
+        ProductTypeCountModel? countModel = await GetQuery(GetProductInclusions(), false)
+            .Select(t => new ProductTypeCountModel()
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Count = t.Products.Count
+            })
+            .FirstOrDefaultAsync(t => t.Id == id);
+
+        ProductTypeIsNotNull(countModel, id.ToString());
+
+        return countModel!;
     }
 
-    private async Task<ProductTypeCountModel> GetCountAsync(ProductType type)
+    private static void NormalFormat(ProductType type)
     {
-        await _db.Entry(type).Collection(t => t.Products).LoadAsync();
+        StringBuilder sb = new(type.Name.ToLower());
+        sb[0] = char.ToUpper(sb[0]);
 
-        ProductTypeCountModel countModel = _mapper.Map<ProductTypeCountModel>(type);
-
-        return countModel;
+        type.Name = sb.ToString();
     }
+
+    // Queries
     private static IQueryable<ProductType> GetQuery(IQueryable<ProductType> query, bool tracking = false)
     {
         return tracking
@@ -132,6 +121,34 @@ public sealed class ProductTypeRepository : IProductTypeRepository
     private IQueryable<ProductType> GetQuery(bool tracking = false)
     {
         IQueryable<ProductType> query = _db.ProductTypes;
-        return GetQuery(query);
+
+        return GetQuery(query, tracking);
+    }
+    private IQueryable<ProductType> GetProductInclusions()
+    {
+        IQueryable<ProductType> query = _db.ProductTypes
+                                            .Include(t => t.Products);
+
+        return query;
+    }
+
+    // Exceptions
+    private static void IdIsNotNegative(int id)
+    {
+        if (id < 1)
+        {
+            throw new ProductTypeIdNegativeException(id.ToString());
+        }
+    }
+    private static void ProductTypeIsNotNull(object? obj, string id)
+    {
+        if (obj == null)
+        {
+            throw new ProductTypeNotFoundException(id);
+        }
+    }
+    private static void ProductTypeIsNull(ProductType type)
+    {
+        throw new ProductTypeIsExistException(type);
     }
 }

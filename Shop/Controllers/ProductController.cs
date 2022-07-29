@@ -56,15 +56,19 @@ public sealed class ProductController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<CatalogView>> PagingAsync([FromQuery] SortAndFilter sortAndFilter, [FromQuery] PagingModel paging)
     {
-        IQueryable<Product> productsQuery = await _uow.Products.SortAndFilterAsync(sortAndFilter);
+        IQueryable<Product> productsQuery = await _uow.Products.SortAndFilterAsync(sortAndFilter, false);
 
-        CatalogView? catalog = new() { CountProducts = await productsQuery.LongCountAsync() };
+        int count = await productsQuery.CountAsync();
 
         productsQuery = paging.Paging(productsQuery);
 
-        Product[] products = productsQuery.ToArray();
-        ProductInCatalogView[] productCatalog = _mapper.Map<ProductInCatalogView[]>(products);
-        catalog.Products = productCatalog;
+        IEnumerable<ProductInCatalogView> productsView = _mapper.Map<ProductInCatalogView[]>(productsQuery);
+
+        CatalogView catalog = new()
+        {
+            Products = productsView,
+            Count = count
+        };
 
         return Ok(catalog);
     }

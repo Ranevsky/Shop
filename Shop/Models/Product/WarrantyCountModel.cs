@@ -1,5 +1,8 @@
 ﻿namespace Shop.Models.Product;
 
+/// <summary>
+/// <b>Warning:</b> Not supported AutoMapper
+/// </summary>
 public class WarrantyCountModel
 {
     public int Id { get; set; }

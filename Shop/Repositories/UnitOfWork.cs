@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-
-using Shop.Context;
+﻿using Shop.Context;
 using Shop.Repositories.Interfaces;
 
 namespace Shop.Repositories;
@@ -8,17 +6,15 @@ namespace Shop.Repositories;
 public sealed class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationContext _db;
-    private readonly IMapper _mapper;
 
     private IProductRepository? productRepository;
     private IImageRepository? imageRepository;
     private IProductTypeRepository? productTypeRepository;
     private IWarrantyRepository? WarrantyRepository;
 
-    public UnitOfWork(ApplicationContext db, IMapper mapper)
+    public UnitOfWork(ApplicationContext db)
     {
         _db = db;
-        _mapper = mapper;
     }
 
     public IProductRepository Products
@@ -49,7 +45,7 @@ public sealed class UnitOfWork : IUnitOfWork
         {
             if (productTypeRepository == null)
             {
-                productTypeRepository = new ProductTypeRepository(_db, _mapper);
+                productTypeRepository = new ProductTypeRepository(_db);
                 ;
             }
             return productTypeRepository;
@@ -62,7 +58,7 @@ public sealed class UnitOfWork : IUnitOfWork
         {
             if (WarrantyRepository == null)
             {
-                WarrantyRepository = new WarrantyRepository(_db, _mapper);
+                WarrantyRepository = new WarrantyRepository(_db);
             }
             return WarrantyRepository;
         }

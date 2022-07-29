@@ -17,7 +17,7 @@ public interface IProductRepository
     Task DeleteAsync(int productId);
 
     /// <exception cref="BadRequestException"></exception>
-    Task<IQueryable<Product>> SortAndFilterAsync(SortAndFilter model);
+    Task<IQueryable<Product>> SortAndFilterAsync(SortAndFilter model, bool tracking = false);
 
     /// <exception cref="ProductNotFoundException"></exception>
     /// <exception cref="ProductIdNegativeException"></exception>

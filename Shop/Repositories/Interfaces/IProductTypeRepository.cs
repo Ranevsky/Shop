@@ -13,9 +13,6 @@ public interface IProductTypeRepository
     /// <exception cref="ProductTypeNotFoundException"></exception>
     Task ChangeNameAsync(int id, string newName);
 
-    /// <exception cref="ProductTypeNotFoundException"></exception>
-    Task<ProductType> GetAsync(string name, bool tracking = false);
-
     /// <exception cref="ProductTypeIdNegativeException"></exception>
     /// <exception cref="ProductTypeNotFoundException"></exception>
     Task<ProductType> GetAsync(int id, bool tracking = false);
@@ -31,9 +28,6 @@ public interface IProductTypeRepository
     /// Don't use, if you are not sure of existing
     /// </summary>
     Task AddNotExistAsync(ProductType type);
-
-    /// <exception cref="ProductTypeNotFoundException"></exception>
-    Task<ProductTypeCountModel> GetCountAsync(string name);
 
     /// <exception cref="ProductTypeIdNegativeException"></exception>
     /// <exception cref="ProductTypeNotFoundException"></exception>

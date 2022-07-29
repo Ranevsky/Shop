@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 using Shop.Context;
 using Shop.Exceptions;
@@ -12,26 +10,36 @@ namespace Shop.Repositories;
 public sealed class WarrantyRepository : IWarrantyRepository
 {
     private readonly ApplicationContext _db;
-    private readonly IMapper _mapper;
-    public WarrantyRepository(ApplicationContext db, IMapper mapper)
+
+    public WarrantyRepository(ApplicationContext db)
     {
         _db = db;
-        _mapper = mapper;
     }
 
-    public async Task<Warranty> GetAsync(int id)
+    public async Task<Warranty> GetAsync(int id, bool tracking = false)
     {
-        return await GetAsync(id, _db.Warranties);
+        return await GetAsync(id, GetBaseInclusions(), tracking);
     }
     public async Task<WarrantyCountModel> GetCountAsync(int id)
     {
-        Warranty warranty = await GetAsync(id, _db.Warranties.Include(w => w.Products), false);
-        WarrantyCountModel countModel = _mapper.Map<WarrantyCountModel>(warranty);
-        return countModel;
+        IdIsNotNegative(id);
+
+        WarrantyCountModel? countModel = await GetQuery(GetProductInclusions(), false)
+            .Select(w => new WarrantyCountModel()
+            {
+                Id = w.Id,
+                Name = w.Name,
+                Count = w.Products.Count
+            })
+            .FirstOrDefaultAsync(w => w.Id == id);
+
+        WarrantyIsNotNull(countModel, id.ToString());
+
+        return countModel!;
     }
     public async Task UpdateAsync(int id, WarrantyUpdateModel model)
     {
-        Warranty warranty = await GetAsync(id, _db.Warranties, true);
+        Warranty warranty = await GetAsync(id, GetBaseInclusions(), true);
 
         if (model.Name != null)
         {
@@ -47,6 +55,7 @@ public sealed class WarrantyRepository : IWarrantyRepository
     public async Task DeleteAsync(int id)
     {
         Warranty warranty = await GetAsync(id);
+
         _db.Remove(warranty);
     }
     public async Task AddAsync(Warranty warranty)
@@ -60,24 +69,53 @@ public sealed class WarrantyRepository : IWarrantyRepository
         return warranties;
     }
 
+    // Queries
     private static async Task<Warranty> GetAsync(int id, IQueryable<Warranty> queryInclusions, bool tracking = false)
+    {
+        IdIsNotNegative(id);
+
+        Warranty? warranty = await GetQuery(queryInclusions, tracking)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        WarrantyIsNotNull(warranty, id.ToString());
+
+        return warranty!;
+    }
+    private IQueryable<Warranty> GetQuery(bool tracking = false)
+    {
+        IQueryable<Warranty> query = _db.Warranties;
+
+        return GetQuery(query, tracking);
+    }
+    private static IQueryable<Warranty> GetQuery(IQueryable<Warranty> query, bool tracking = false)
+    {
+        return tracking
+            ? query.AsTracking()
+            : query.AsNoTracking();
+    }
+    private IQueryable<Warranty> GetProductInclusions()
+    {
+        return _db.Warranties
+            .Include(w => w.Products);
+    }
+    private IQueryable<Warranty> GetBaseInclusions()
+    {
+        return _db.Warranties;
+    }
+
+    // Exceptions
+    private static void IdIsNotNegative(int id)
     {
         if (id < 1)
         {
             throw new WarrantyIdNegativeException(id.ToString());
         }
-        Warranty? warranty = await GetQuery(queryInclusions, tracking)
-            .FirstOrDefaultAsync(p => p.Id == id);
-
-        return warranty ?? throw new WarrantyNotFoundException(id.ToString());
     }
-    private IQueryable<Warranty> GetQuery(bool tracking = false)
+    private static void WarrantyIsNotNull(object? obj, string id)
     {
-        IQueryable<Warranty> query = _db.Warranties;
-        return GetQuery(query, tracking);
-    }
-    private static IQueryable<Warranty> GetQuery(IQueryable<Warranty> query, bool tracking = false)
-    {
-        return tracking ? query.AsTracking() : query.AsNoTracking();
+        if (obj == null)
+        {
+            throw new WarrantyNotFoundException(id);
+        }
     }
 }
