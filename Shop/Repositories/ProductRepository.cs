@@ -194,7 +194,7 @@ public sealed class ProductRepository : IProductRepository
     private async Task CheckingImageExistsAsync(params Product[] products)
     {
         bool isChange = false;
-        foreach (Product? product in products)
+        foreach (Product product in products)
         {
             if (product.IsNeedDeleteImage())
             {

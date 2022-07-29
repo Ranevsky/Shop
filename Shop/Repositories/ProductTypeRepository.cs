@@ -67,7 +67,7 @@ public sealed class ProductTypeRepository : IProductTypeRepository
 
         ProductTypeIsNotNull(type, id);
 
-        foreach (Product? product in type!.Products)
+        foreach (Product product in type!.Products)
         {
             await productRepository.DeleteAsync(product.Id);
         }

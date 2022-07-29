@@ -24,7 +24,7 @@ public sealed class ImageRepository : IImageRepository
 
         string[] filesNames = new string[uploadedFiles.Count];
         int iteration = 0;
-        foreach (IFormFile? file in uploadedFiles)
+        foreach (IFormFile file in uploadedFiles)
         {
             string[] splittedType = file.ContentType.Split('/');
             string type = splittedType[0];
@@ -47,7 +47,7 @@ public sealed class ImageRepository : IImageRepository
         }
 
         iteration = 0;
-        foreach (IFormFile? file in uploadedFiles)
+        foreach (IFormFile file in uploadedFiles)
         {
             string fullPath = $"{directoryPath}/{filesNames[iteration]}";
 
@@ -61,7 +61,7 @@ public sealed class ImageRepository : IImageRepository
 
     private static async Task<Image> DownloadImageAsync(IFormFile uploadedFile, string FullPath, string nameImage, string pathImage)
     {
-        using (FileStream? fileStream = new(FullPath, FileMode.Create))
+        using (FileStream fileStream = new(FullPath, FileMode.Create))
         {
             await uploadedFile.CopyToAsync(fileStream);
         }
