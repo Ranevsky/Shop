@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 
-using Shop.Constants;
 using Shop.Models.Catalog;
 using Shop.Models.Product;
 
@@ -12,6 +11,11 @@ public sealed class ProductProfile : Profile
     {
         // ProductView
         CreateMap<Product, ProductView>()
+            .BeforeMap((product, productView) =>
+             {
+                 bool isNeedSave = IsNeedDeleteImage(product);
+                 productView.IsNeedSave = isNeedSave;
+             })
             .ForMember(p => p.ProductType, opt =>
             {
                 opt.MapFrom(p => p.Type.Name);
@@ -25,12 +29,6 @@ public sealed class ProductProfile : Profile
                 opt.MapFrom(p => p.Characteristics);
             });
 
-        CreateMap<Image, ImageProductView>()
-            .ForMember(imageView => imageView.Url, opt =>
-            {
-                opt.MapFrom(image => ImageProductUrl(image));
-            });
-
         CreateMap<Warranty, ProductWarrantyView>();
 
         CreateMap<Characteristic, string>()
@@ -42,9 +40,20 @@ public sealed class ProductProfile : Profile
              {
                  opt.MapFrom(product => product.Type.Name);
              })
-            .ForMember(ProductView => ProductView.Image, opt =>
+            .ForMember(productView => productView.Image, opt =>
+             {
+                 opt.MapFrom(product => product.Images.FirstOrDefault());
+             });
+
+        CreateMap<Product[], CatalogView>()
+            .BeforeMap((products, catalog) =>
             {
-                opt.MapFrom(product => ImageProductUrl(product.Images.FirstOrDefault()));
+                bool isNeedSave = IsNeedDeleteImage(products);
+                catalog.IsNeedSave = isNeedSave;
+            })
+            .ForMember(catalog => catalog.Products, opt =>
+            {
+                opt.MapFrom(products => products);
             });
 
         // ProductAddModel
@@ -75,10 +84,16 @@ public sealed class ProductProfile : Profile
             });
     }
 
-    public static string? ImageProductUrl(Image? image)
+    public bool IsNeedDeleteImage(params Product[] products)
     {
-        return image != null
-            ? $"{UrlConst.ApplicationUrl}{UrlConst.ImageUrl}{PathConst.ProductPath}/{image.Path}/{image.Name}"
-            : null;
+        bool isNeedSave = false;
+        foreach (Product? product in products)
+        {
+            if (product?.IsNeedDeleteImage() ?? false)
+            {
+                isNeedSave = true;
+            }
+        }
+        return isNeedSave;
     }
 }

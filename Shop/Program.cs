@@ -11,7 +11,6 @@ internal sealed class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-        InitializeProgram.Initialize(builder);
 
         // Services
 
@@ -27,6 +26,8 @@ internal sealed class Program
             .AddControllers();
 
         WebApplication app = builder.Build();
+
+        InitializeProgram.Initialize(builder);
 
         // middlewares
 

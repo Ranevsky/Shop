@@ -36,11 +36,12 @@ public sealed class ProductController : ControllerBase
     public async Task<ActionResult<ProductView>> GetProductAsync(int id)
     {
         Product product = await _uow.Products.GetAsync(id, true);
-
         product.Popularity++;
-        await _uow.SaveAsync();
 
         ProductView viewProduct = _mapper.Map<ProductView>(product);
+
+        await _uow.SaveAsync();
+
         return Ok(viewProduct);
     }
 
@@ -56,19 +57,21 @@ public sealed class ProductController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<CatalogView>> PagingAsync([FromQuery] SortAndFilter sortAndFilter, [FromQuery] PagingModel paging)
     {
-        IQueryable<Product> productsQuery = await _uow.Products.SortAndFilterAsync(sortAndFilter, false);
+        IQueryable<Product> productsQuery = await _uow.Products.SortAndFilterAsync(sortAndFilter, true);
 
         int count = await productsQuery.CountAsync();
 
         productsQuery = paging.Paging(productsQuery);
 
-        IEnumerable<ProductInCatalogView> productsView = _mapper.Map<ProductInCatalogView[]>(productsQuery);
+        Product[] products = productsQuery.ToArray();
 
-        CatalogView catalog = new()
+        CatalogView catalog = _mapper.Map<CatalogView>(products);
+        catalog.Count = count;
+
+        if (catalog.IsNeedSave)
         {
-            Products = productsView,
-            Count = count
-        };
+            await _uow.SaveAsync();
+        }
 
         return Ok(catalog);
     }
@@ -132,7 +135,7 @@ public sealed class ProductController : ControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> AddImagesAsync(int id, IFormFileCollection files)
     {
-        await _uow.Products.AddImagesAsync(id, files, _uow.Images);
+        await _uow.Products.AddImagesAsync(id, files);
 
         await _uow.SaveAsync();
 

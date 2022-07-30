@@ -28,9 +28,9 @@ public sealed class ApplicationContext : DbContext
             .WithMany(p => p.Characteristics)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Image>()
-            .HasOne(i => i.Product)
-            .WithMany(p => p.Images)
+        modelBuilder.Entity<Product>()
+            .HasMany(p => p.Images)
+            .WithOne(i => i.Product)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Warranty>()

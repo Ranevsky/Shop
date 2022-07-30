@@ -23,7 +23,7 @@ public interface IProductRepository
     /// <exception cref="ProductIdNegativeException"></exception>
     /// <exception cref="UploadFileIsEmptyException"></exception>
     /// <exception cref="FileIsNotImageException"></exception>
-    Task AddImagesAsync(int productId, IFormFileCollection uploadedFiles, IImageRepository imageRepository);
+    Task AddImagesAsync(int productId, IFormFileCollection uploadedFiles);
 
     /// <exception cref="ProductNotFoundException"></exception>
     /// <exception cref="ProductIdNegativeException"></exception>

@@ -1,21 +1,16 @@
 ﻿using Shop.Constants;
-using Shop.Context;
 using Shop.Exceptions;
 using Shop.Models.Product;
-using Shop.Repositories.Interfaces;
 
-namespace Shop.Repositories;
+namespace Shop.Models;
 
-public sealed class ImageRepository : IImageRepository
+public static class ImageCreator<TImage> where TImage : Image, new()
 {
-    public readonly ApplicationContext Db;
-    public ImageRepository(ApplicationContext db)
-    {
-        Db = db;
-    }
-
-    // example: pathimage = "/products/id
-    public async Task<IEnumerable<Image>> CreateImagesAsync(IFormFileCollection uploadedFiles, string pathImage)
+    // example: pathimage = "id" -> final directory
+    // example: imageDirectory = "/products" -> directory before wwwroot/images
+    /// <exception cref="UploadFileIsEmptyException"></exception>
+    /// <exception cref="FileIsNotImageException"></exception>
+    public static async Task<IEnumerable<TImage>> CreateAsync(IFormFileCollection uploadedFiles, string? imageDirectory, string pathImage)
     {
         if (uploadedFiles.Count < 1)
         {
@@ -38,9 +33,9 @@ public sealed class ImageRepository : IImageRepository
 
             iteration++;
         }
-        List<Image> images = new(uploadedFiles.Count);
+        List<TImage> images = new(uploadedFiles.Count);
 
-        string directoryPath = $"{PathConst.ImageFullPath}{pathImage}";
+        string directoryPath = $"{PathConst.ImageFullPath}{imageDirectory?.ToString() ?? ""}/{pathImage}";
         if (!Directory.Exists(directoryPath))
         {
             Directory.CreateDirectory(directoryPath);
@@ -51,7 +46,7 @@ public sealed class ImageRepository : IImageRepository
         {
             string fullPath = $"{directoryPath}/{filesNames[iteration]}";
 
-            Image image = await DownloadImageAsync(file, fullPath, filesNames[iteration], pathImage);
+            TImage image = await DownloadImageAsync(file, fullPath, filesNames[iteration], pathImage);
             images.Add(image);
 
             iteration++;
@@ -59,14 +54,14 @@ public sealed class ImageRepository : IImageRepository
         return images;
     }
 
-    private static async Task<Image> DownloadImageAsync(IFormFile uploadedFile, string FullPath, string nameImage, string pathImage)
+    private static async Task<TImage> DownloadImageAsync(IFormFile uploadedFile, string FullPath, string nameImage, string pathImage)
     {
         using (FileStream fileStream = new(FullPath, FileMode.Create))
         {
             await uploadedFile.CopyToAsync(fileStream);
         }
 
-        Image image = new() { Name = nameImage, Path = pathImage };
+        TImage image = new() { Name = nameImage, Path = pathImage };
         return image;
     }
 

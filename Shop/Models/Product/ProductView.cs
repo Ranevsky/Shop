@@ -1,4 +1,6 @@
-﻿namespace Shop.Models.Product;
+﻿using System.Text.Json.Serialization;
+
+namespace Shop.Models.Product;
 
 public sealed class ProductView
 {
@@ -11,4 +13,7 @@ public sealed class ProductView
     public List<string> Characteristic { get; set; } = new();
     public ProductWarrantyView? Warranty { get; set; }
     public bool IsStock { get; set; }
+
+    [JsonIgnore]
+    public bool IsNeedSave { get; set; }
 }

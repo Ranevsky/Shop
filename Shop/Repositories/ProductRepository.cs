@@ -33,14 +33,12 @@ public sealed class ProductRepository : IProductRepository
     public async Task<Product> GetAsync(int id, bool tracking = false)
     {
         Product product = await GetAsync(id, GetAllInclusions(), tracking);
-#warning May be existing
-        await CheckingImageExistsAsync(product);
 
         return product;
     }
     public async Task DeleteAsync(int id)
     {
-        Product product = await GetAsync(id, true);
+        Product product = await GetAsync(id, GetAllInclusions(), true);
 
         product.Delete();
 
@@ -60,7 +58,7 @@ public sealed class ProductRepository : IProductRepository
     }
     public async Task SetWarrantyAsync(int productId, Warranty? warranty)
     {
-        Product product = await GetAsync(productId, true);
+        Product product = await GetAsync(productId, GetBaseInclusions(), true);
 
         product.Warranty = warranty;
     }
@@ -128,12 +126,11 @@ public sealed class ProductRepository : IProductRepository
 
         return query;
     }
-    public async Task AddImagesAsync(int productId, IFormFileCollection uploadedFiles, IImageRepository imageRepository)
+    public async Task AddImagesAsync(int productId, IFormFileCollection uploadedFiles)
     {
         Product product = await GetAsync(productId, GetImageInclusions(), true);
 
-#warning maybe .CreateImagesAsync(..., string -> method) ?
-        IEnumerable<Image> images = await imageRepository.CreateImagesAsync(uploadedFiles, $"{PathConst.ProductPath}/{product.Id}");
+        IEnumerable<ProductImage> images = await Shop.Models.ImageCreator<ProductImage>.CreateAsync(uploadedFiles, PathConst.ProductPath, product.Id.ToString());
 
         product.Images.AddRange(images);
     }
@@ -141,8 +138,8 @@ public sealed class ProductRepository : IProductRepository
     {
         Product product = await GetAsync(productId, GetImageInclusions(), true);
 
-        Dictionary<int, Image> dictionary = new(
-            product.Images.Select(i => new KeyValuePair<int, Image>(i.Id, i)));
+        Dictionary<int, ProductImage> dictionary = new(
+            product.Images.Select(i => new KeyValuePair<int, ProductImage>(i.Id, i)));
 
         // Validation
         foreach (int imageId in imagesId)
@@ -191,22 +188,6 @@ public sealed class ProductRepository : IProductRepository
         }
     }
 
-    private async Task CheckingImageExistsAsync(params Product[] products)
-    {
-        bool isChange = false;
-        foreach (Product product in products)
-        {
-            if (product.IsNeedDeleteImage())
-            {
-                isChange = true;
-            }
-        }
-        if (isChange)
-        {
-            await _db.SaveChangesAsync();
-        }
-    }
-
     // Queries
     private static async Task<Product> GetAsync(int id, IQueryable<Product> queryInclusions, bool tracking = false)
     {
@@ -243,4 +224,9 @@ public sealed class ProductRepository : IProductRepository
         return _db.Products
             .Include(p => p.Images);
     }
+    private IQueryable<Product> GetBaseInclusions()
+    {
+        return _db.Products;
+    }
+
 }

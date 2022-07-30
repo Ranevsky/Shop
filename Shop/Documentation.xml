@@ -29,6 +29,11 @@
             Example: /image
             </summary>
         </member>
+        <member name="P:Shop.Constants.UrlConst.FullImageUrl">
+            <summary>
+            Example: https://localhost:7287/image
+            </summary>
+        </member>
         <member name="M:Shop.Controllers.ProductController.GetProductAsync(System.Int32)">
             <summary>
             Get product
@@ -279,6 +284,10 @@
             Default: <b>0</b>
             </summary>
         </member>
+        <member name="M:Shop.Models.ImageCreator`1.CreateAsync(Microsoft.AspNetCore.Http.IFormFileCollection,System.String,System.String)">
+            <exception cref="T:Shop.Exceptions.UploadFileIsEmptyException"></exception>
+            <exception cref="T:Shop.Exceptions.FileIsNotImageException"></exception>
+        </member>
         <member name="P:Shop.Models.Product.Image.Name">
             <summary>
             Example: foo.png
@@ -287,6 +296,11 @@
         <member name="P:Shop.Models.Product.Image.Path">
             <summary>
             Example: 2
+            </summary>
+        </member>
+        <member name="P:Shop.Models.Product.Image.Url">
+            <summary>
+            Image may be not exists, checking IsExist
             </summary>
         </member>
         <member name="P:Shop.Models.Product.ProductTypeAddModel.Name">
@@ -304,10 +318,6 @@
             <b>Warning:</b> Not supported AutoMapper
             </summary>
         </member>
-        <member name="M:Shop.Repositories.Interfaces.IImageRepository.CreateImagesAsync(Microsoft.AspNetCore.Http.IFormFileCollection,System.String)">
-            <exception cref="T:Shop.Exceptions.UploadFileIsEmptyException"></exception>
-            <exception cref="T:Shop.Exceptions.FileIsNotImageException"></exception>
-        </member>
         <member name="M:Shop.Repositories.Interfaces.IProductRepository.GetAsync(System.Int32,System.Boolean)">
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
             <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
@@ -319,7 +329,7 @@
         <member name="M:Shop.Repositories.Interfaces.IProductRepository.SortAndFilterAsync(Shop.Models.Catalog.SortAndFilter,System.Boolean)">
             <exception cref="T:Shop.Exceptions.BadRequestException"></exception>
         </member>
-        <member name="M:Shop.Repositories.Interfaces.IProductRepository.AddImagesAsync(System.Int32,Microsoft.AspNetCore.Http.IFormFileCollection,Shop.Repositories.Interfaces.IImageRepository)">
+        <member name="M:Shop.Repositories.Interfaces.IProductRepository.AddImagesAsync(System.Int32,Microsoft.AspNetCore.Http.IFormFileCollection)">
             <exception cref="T:Shop.Exceptions.ProductNotFoundException"></exception>
             <exception cref="T:Shop.Exceptions.ProductIdNegativeException"></exception>
             <exception cref="T:Shop.Exceptions.UploadFileIsEmptyException"></exception>

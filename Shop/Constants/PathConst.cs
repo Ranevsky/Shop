@@ -26,17 +26,16 @@ public static class PathConst
     {
         IConfigurationSection paths = config.GetRequiredSection("Paths");
 
-        Action<string, string> exception = (string key, string value) =>
-        {
-            throw new PathEndedSlashJsonException(key, value, value[^1]);
-        };
-
         _imagePath = paths.GetRequiredSection("ImagePath").Value;
-        ImagePath.EndsSlashException(nameof(ImagePath), exception);
+        ImagePath.EndsSlashException(nameof(ImagePath), Exception);
 
         _imageFullPath = $"{webRootPath}{_imagePath}";
 
         _productPath = paths.GetRequiredSection("ProductPath").Value;
-        ProductPath.EndsSlashException(nameof(ProductPath), exception);
+        ProductPath.EndsSlashException(nameof(ProductPath), Exception);
+    }
+    private static void Exception(string key, string value)
+    {
+        throw new PathEndedSlashJsonException(key, value, value[^1]);
     }
 }

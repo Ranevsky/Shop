@@ -27,7 +27,8 @@ public static class ServiceExtension
         {
             typeof(ProductProfile),
             typeof(WarrantyProfile),
-            typeof(ProductTypeProfile)
+            typeof(ProductTypeProfile),
+            typeof(ImageProfile)
         };
 
         return services.AddAutoMapper(profiles);

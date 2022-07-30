@@ -1,10 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-using Shop.Constants;
-
 namespace Shop.Models.Product;
 
-public sealed class Image : IDelete
+public abstract class Image : IDelete
 {
     public int Id { get; set; }
     /// <summary>
@@ -15,14 +13,29 @@ public sealed class Image : IDelete
     /// Example: 2
     /// </summary>
     public string Path { get; set; } = null!;
+    public bool IsExists
+    {
+        get
+        {
+            if (!_isExists)
+            {
+                _isExists = File.Exists(FullPath);
+            }
+            return _isExists;
+        }
+
+    }
+    private bool _isExists = false;
 
     [JsonIgnore]
-    public Product? Product { get; set; }
-#warning Maybe not exist, get url (if IsExist)
+    protected abstract string FullPath { get; }
+
+    /// <summary>
+    /// Image may be not exists, checking IsExist
+    /// </summary>
     [JsonIgnore]
-    private string FullPath => $"{PathConst.ImageFullPath}/{Path}/{Name}";
-    [JsonIgnore]
-    public bool IsExists => File.Exists(FullPath);
+    public abstract string Url { get; }
+
     public void Delete()
     {
         if (!IsExists)
@@ -32,6 +45,6 @@ public sealed class Image : IDelete
 
 #warning Add logger
         File.Delete(FullPath);
-        Console.WriteLine($"Delete image '{Path}/{Name}'");
+        Console.WriteLine($"Delete image with id = {Id} and path: '{Path}/{Name}'");
     }
 }

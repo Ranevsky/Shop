@@ -8,7 +8,6 @@ public sealed class UnitOfWork : IUnitOfWork
     private readonly ApplicationContext _db;
 
     private IProductRepository? productRepository;
-    private IImageRepository? imageRepository;
     private IProductTypeRepository? productTypeRepository;
     private IWarrantyRepository? WarrantyRepository;
 
@@ -28,17 +27,7 @@ public sealed class UnitOfWork : IUnitOfWork
             return productRepository;
         }
     }
-    public IImageRepository Images
-    {
-        get
-        {
-            if (imageRepository == null)
-            {
-                imageRepository = new ImageRepository(_db);
-            }
-            return imageRepository;
-        }
-    }
+
     public IProductTypeRepository ProductTypes
     {
         get

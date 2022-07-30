@@ -8,7 +8,7 @@ public sealed class Product : IDelete
     public string Name { get; set; } = null!;
     public ProductType Type { get; set; } = null!;
     public decimal Price { get; set; }
-    public List<Image> Images { get; set; } = new();
+    public List<ProductImage> Images { get; set; } = new();
     public int Popularity { get; set; }
     public Description? Description { get; set; }
     public List<Characteristic>? Characteristics { get; set; } = new();
@@ -16,25 +16,20 @@ public sealed class Product : IDelete
     public bool IsStock { get; set; }
     public bool IsNeedDeleteImage()
     {
-        bool isChange = false;
+        int count = Images.RemoveAll(i => !i.IsExists);
+#warning Add loger in deleting image
 
-        for (int i = 0; i < Images.Count; i++)
+        bool isNeedSave = count > 0;
+        if (isNeedSave)
         {
-            if (!Images[i].IsExists)
-            {
-                Console.WriteLine($"Remove image id '{Images[i].Id}'");
-#warning Image removing disabled
-                //Images.Remove(Images[i]);
-                isChange = true;
-                //i--;
-            }
+            Console.WriteLine($"Delete {count} image in product with id = {Id}");
         }
 
-        return isChange;
+        return isNeedSave;
     }
-    public void DeleteImage(Image image)
+    public void DeleteImage(ProductImage image)
     {
-        Image? img = Images.Find(i => object.ReferenceEquals(i, image));
+        ProductImage? img = Images.Find(i => object.ReferenceEquals(i, image));
         if (img == null)
         {
             return;
