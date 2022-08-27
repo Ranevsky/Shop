@@ -33,6 +33,30 @@ public static class PathConst
 
         _productPath = paths.GetRequiredSection("ProductPath").Value;
         ProductPath.EndsSlashException(nameof(ProductPath), Exception);
+
+        bool isCreate = paths.GetRequiredSection("CreateDirectories").Get<bool>();
+        CheckDirectories(isCreate);
+    }
+    public static void CheckDirectories(bool isCreate)
+    {
+        string baseDirectory = PathConst.ImageFullPath;
+
+        Action<string> action = isCreate
+            ? path => Directory.CreateDirectory(path)
+            : path => throw new DirectoryNotFoundException($"Directory '{path}' not exist");
+
+        Check(baseDirectory);
+
+        string otherDirectory = $"{baseDirectory}{PathConst.ProductPath}";
+        Check(otherDirectory);
+
+        void Check(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                action.Invoke(path);
+            }
+        }
     }
     private static void Exception(string key, string value)
     {

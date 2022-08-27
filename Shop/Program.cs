@@ -9,8 +9,12 @@ internal sealed class Program
 {
     private static void Main(string[] args)
     {
-        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions
+        {
+            ContentRootPath = Directory.GetCurrentDirectory(),
+            WebRootPath = "wwwroot",
+            Args = args
+        });
 
         // Services
 
@@ -26,8 +30,8 @@ internal sealed class Program
             .AddControllers();
 
         WebApplication app = builder.Build();
-
-        InitializeProgram.Initialize(builder);
+        
+        InitializeProgram.Initialize(app);
 
         // middlewares
 

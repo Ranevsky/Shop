@@ -27,8 +27,8 @@ public static class UrlConst
     public static void Initialize(IConfiguration config)
     {
         IConfigurationSection urls = config.GetRequiredSection("Urls");
+        _applicationUrl = urls.GetRequiredSection("ApplicationUrl").Value;
 
-        _applicationUrl = urls.Value.Split(';')[0];
         ApplicationUrl.EndsSlashException(nameof(ApplicationUrl), Exception);
 
         _imageUrl = urls.GetRequiredSection("ImageUrl").Value;

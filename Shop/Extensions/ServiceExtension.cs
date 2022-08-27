@@ -15,12 +15,23 @@ public static class ServiceExtension
     }
     public static IServiceCollection AddApplicationContext(this IServiceCollection services, IConfiguration configuration)
     {
-        return services.AddDbContext<ApplicationContext>(option =>
-                {
-                    string connection = configuration.GetConnectionString("DefaultConnection");
-                    option.UseSqlite(connection);
-                });
+        DbContextOptionsBuilder option = new();
+        SetOption(option);
+
+        using (ApplicationContext db = new(option.Options))
+        {
+            db.Database.Migrate();
+        }
+        
+        return services.AddDbContext<ApplicationContext>(SetOption);
+
+        void SetOption(DbContextOptionsBuilder option)
+        {
+            string connection = configuration.GetConnectionString("DefaultConnection");
+            option.UseSqlite(connection);
+        }
     }
+
     public static IServiceCollection AddAutoMapper(this IServiceCollection services)
     {
         Type[] profiles = new Type[]

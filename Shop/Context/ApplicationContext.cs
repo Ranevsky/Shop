@@ -13,7 +13,7 @@ public sealed class ApplicationContext : DbContext
     public DbSet<Characteristic> Characteristics => Set<Characteristic>();
     public DbSet<Description> Descriptions => Set<Description>();
 
-    public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
+    public ApplicationContext(DbContextOptions options) : base(options) { }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
